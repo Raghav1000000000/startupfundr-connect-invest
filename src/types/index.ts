@@ -46,3 +46,29 @@ export interface Post {
   likes: number;
   comments: number;
 }
+
+// New types for backend integration
+export interface Comment {
+  id: string;
+  userId: string;
+  postId: string;
+  content: string;
+  date: Date;
+}
+
+export interface Transaction {
+  id: string;
+  userId: string;
+  amount: number;
+  type: 'deposit' | 'withdrawal' | 'investment';
+  status: 'pending' | 'completed' | 'failed';
+  date: Date;
+  reference?: string;
+}
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'moderator';
+}
