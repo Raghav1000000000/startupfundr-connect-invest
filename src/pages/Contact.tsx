@@ -2,34 +2,18 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import { CheckCircle, Mail, MapPin, Phone } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-    reason: ""
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData(prev => ({ ...prev, reason: value }));
-  };
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,17 +21,11 @@ const Contact = () => {
     
     // Simulate form submission
     setTimeout(() => {
-      toast({
-        title: "Message Sent",
-        description: "Thank you for reaching out. We'll get back to you soon!",
-      });
       setIsSubmitting(false);
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-        reason: ""
+      setIsSubmitted(true);
+      toast({
+        title: "Message sent",
+        description: "Thank you for contacting us. We'll get back to you shortly.",
       });
     }, 1500);
   };
@@ -61,198 +39,206 @@ const Contact = () => {
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Contact Us</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Have questions or need assistance? We're here to help.
-              Reach out to our team and we'll get back to you as soon as possible.
+              Have questions about StartupFundr? Our team is here to help. 
+              Reach out to us and we'll respond as soon as possible.
             </p>
           </div>
         </section>
 
-        {/* Contact form and info */}
-        <section className="py-16">
+        {/* Contact Form and Info */}
+        <section className="py-12 md:py-16">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Contact information */}
-              <div className="lg:col-span-1">
-                <div className="sticky top-8">
-                  <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
-                  <div className="space-y-6">
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-start">
-                          <div className="bg-fundr-100 p-3 rounded-full mr-4">
-                            <MailIcon className="h-6 w-6 text-fundr-800" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-lg mb-1">Email Us</h3>
-                            <p className="text-muted-foreground mb-2">For general inquiries:</p>
-                            <a href="mailto:info@startupfundr.com" className="text-fundr-600 hover:underline">
-                              info@startupfundr.com
-                            </a>
-                            <p className="text-muted-foreground mt-2 mb-1">For investor support:</p>
-                            <a href="mailto:investors@startupfundr.com" className="text-fundr-600 hover:underline">
-                              investors@startupfundr.com
-                            </a>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-start">
-                          <div className="bg-fundr-100 p-3 rounded-full mr-4">
-                            <PhoneIcon className="h-6 w-6 text-fundr-800" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-lg mb-1">Call Us</h3>
-                            <p className="text-muted-foreground mb-2">Mon - Fri, 9am - 5pm PST</p>
-                            <a href="tel:+18005551234" className="text-fundr-600 hover:underline">
-                              +1 (800) 555-1234
-                            </a>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-start">
-                          <div className="bg-fundr-100 p-3 rounded-full mr-4">
-                            <MapPinIcon className="h-6 w-6 text-fundr-800" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-lg mb-1">Visit Us</h3>
-                            <p className="text-muted-foreground mb-2">Headquarters</p>
-                            <address className="not-italic text-sm">
-                              123 Innovation Way<br />
-                              San Francisco, CA 94107<br />
-                              United States
-                            </address>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Contact Form */}
+              <div>
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold mb-2">Get in Touch</h2>
+                  <p className="text-muted-foreground">
+                    Fill out the form below and we'll get back to you as soon as possible.
+                  </p>
                 </div>
-              </div>
-              
-              {/* Contact form */}
-              <div className="lg:col-span-2">
+
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Send Us a Message</CardTitle>
-                    <CardDescription>
-                      Fill out the form below and we'll respond as soon as possible.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Full Name</Label>
-                          <Input 
-                            id="name" 
-                            name="name" 
-                            placeholder="Your name" 
-                            required
-                            value={formData.name}
-                            onChange={handleInputChange}
-                          />
+                  <CardContent className="p-6">
+                    {isSubmitted ? (
+                      <div className="text-center py-8">
+                        <div className="mb-4 flex justify-center">
+                          <CheckCircle className="h-16 w-16 text-green-500" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
+                        <p className="text-muted-foreground mb-6">
+                          Thank you for contacting us. We'll get back to you shortly.
+                        </p>
+                        <Button onClick={() => setIsSubmitted(false)}>
+                          Send Another Message
+                        </Button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <Label htmlFor="firstName">First Name</Label>
+                            <Input 
+                              id="firstName" 
+                              placeholder="Enter your first name" 
+                              required 
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="lastName">Last Name</Label>
+                            <Input 
+                              id="lastName" 
+                              placeholder="Enter your last name" 
+                              required 
+                            />
+                          </div>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
+                          <Label htmlFor="email">Email Address</Label>
                           <Input 
                             id="email" 
-                            name="email" 
                             type="email" 
-                            placeholder="your.email@example.com" 
-                            required
-                            value={formData.email}
-                            onChange={handleInputChange}
+                            placeholder="Enter your email address" 
+                            required 
                           />
                         </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="reason">Reason for Contact</Label>
-                        <Select 
-                          value={formData.reason} 
-                          onValueChange={handleSelectChange}
-                        >
-                          <SelectTrigger id="reason">
-                            <SelectValue placeholder="Select a reason" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="general">General Inquiry</SelectItem>
-                            <SelectItem value="investor">Investor Support</SelectItem>
-                            <SelectItem value="startup">Startup Application</SelectItem>
-                            <SelectItem value="partnership">Partnership Opportunity</SelectItem>
-                            <SelectItem value="press">Press Inquiry</SelectItem>
-                            <SelectItem value="technical">Technical Support</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="subject">Subject</Label>
-                        <Input 
-                          id="subject" 
-                          name="subject" 
-                          placeholder="What is your message about?" 
-                          required
-                          value={formData.subject}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="message">Message</Label>
-                        <Textarea 
-                          id="message" 
-                          name="message" 
-                          placeholder="Please provide as much detail as possible..." 
-                          rows={6} 
-                          required
-                          value={formData.message}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-
-                      <div className="text-sm text-muted-foreground">
-                        By submitting this form, you agree to our 
-                        <a href="/privacy" className="text-fundr-600 hover:underline mx-1">Privacy Policy</a> 
-                        and consent to being contacted regarding your inquiry.
-                      </div>
-                      
-                      <CardFooter className="px-0 pt-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone Number (Optional)</Label>
+                          <Input 
+                            id="phone" 
+                            placeholder="Enter your phone number" 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="inquiry">Type of Inquiry</Label>
+                          <Select defaultValue="general">
+                            <SelectTrigger id="inquiry">
+                              <SelectValue placeholder="Select inquiry type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="general">General Inquiry</SelectItem>
+                              <SelectItem value="investor">Investor Support</SelectItem>
+                              <SelectItem value="startup">Startup Applications</SelectItem>
+                              <SelectItem value="partnerships">Partnerships</SelectItem>
+                              <SelectItem value="technical">Technical Support</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="message">Message</Label>
+                          <Textarea 
+                            id="message" 
+                            placeholder="How can we help you?" 
+                            rows={5}
+                            required 
+                          />
+                        </div>
                         <Button 
                           type="submit" 
-                          className="w-full md:w-auto" 
+                          className="w-full"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? "Sending..." : "Send Message"}
                         </Button>
-                      </CardFooter>
-                    </form>
+                      </form>
+                    )}
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Contact Information */}
+              <div>
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold mb-2">Contact Information</h2>
+                  <p className="text-muted-foreground">
+                    You can also reach out to us directly using the contact information below.
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-fundr-100 rounded-full p-3 text-fundr-600">
+                      <MapPin className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium mb-1">Our Location</h3>
+                      <p className="text-muted-foreground mb-1">123 Innovation Street</p>
+                      <p className="text-muted-foreground">San Francisco, CA 94103</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="bg-fundr-100 rounded-full p-3 text-fundr-600">
+                      <Mail className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium mb-1">Email Us</h3>
+                      <p className="text-muted-foreground mb-1">support@startupfundr.com</p>
+                      <p className="text-muted-foreground">partnerships@startupfundr.com</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="bg-fundr-100 rounded-full p-3 text-fundr-600">
+                      <Phone className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium mb-1">Call Us</h3>
+                      <p className="text-muted-foreground mb-1">+1 (555) 123-4567</p>
+                      <p className="text-muted-foreground">Mon-Fri, 9am-5pm PT</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-10">
+                  <h3 className="text-lg font-medium mb-4">Office Hours</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Monday - Friday</span>
+                      <span>9:00 AM - 5:00 PM PT</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Saturday</span>
+                      <span>Closed</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Sunday</span>
+                      <span>Closed</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FAQ section */}
-        <section className="py-12 bg-fundr-50">
+        {/* Map Section */}
+        <section className="py-12 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-2">Visit Our Office</h2>
+              <p className="text-muted-foreground">
+                We're located in the heart of San Francisco's tech district
+              </p>
+            </div>
+            <div className="rounded-lg overflow-hidden shadow-lg h-[400px] bg-gray-200">
+              {/* Replace with actual map component if needed */}
+              <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                <p className="text-gray-600">Interactive Map Would Go Here</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-12">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl font-bold mb-4">Common Questions</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Find quick answers to frequently asked questions.
+            <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+              Can't find the answer you're looking for? Check our comprehensive FAQ section.
             </p>
-            <Button 
-              variant="outline" 
-              onClick={() => window.location.href = "/faq"}
-            >
-              Visit FAQ Page
+            <Button asChild>
+              <a href="/faq">Visit FAQ Page</a>
             </Button>
           </div>
         </section>

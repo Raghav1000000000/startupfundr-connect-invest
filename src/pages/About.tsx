@@ -1,186 +1,94 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const About = () => {
-  const teamMembers = [
-    {
-      name: "Sarah Johnson",
-      role: "CEO & Founder",
-      bio: "Sarah has 15 years of experience in venture capital and previously led investments at a top Silicon Valley firm.",
-      image: "/placeholder.svg"
-    },
-    {
-      name: "Michael Chen",
-      role: "CTO",
-      bio: "Michael brings extensive technical expertise from his previous roles at fintech startups and major tech companies.",
-      image: "/placeholder.svg"
-    },
-    {
-      name: "Priya Patel",
-      role: "Head of Startup Relations",
-      bio: "Priya has worked with over 100 startups, helping them secure funding and scale their operations efficiently.",
-      image: "/placeholder.svg"
-    },
-    {
-      name: "David Wilson",
-      role: "Chief Investment Officer",
-      bio: "David has a background in financial analysis and has successfully managed investment portfolios worth over $50M.",
-      image: "/placeholder.svg"
-    }
-  ];
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
         {/* Hero section */}
         <section className="bg-fundr-50 py-16 md:py-24">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">About StartupFundr</h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We're on a mission to democratize startup investing and help innovative 
-              companies get the funding they need to change the world.
-            </p>
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Mission</h1>
+              <p className="text-xl text-muted-foreground mb-8">
+                Connecting innovative startups with forward-thinking investors to build the future together.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* Our story section */}
+        {/* Our Story section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-3xl font-bold mb-6">Our Story</h2>
-                <div className="space-y-4">
-                  <p>
-                    StartupFundr was founded in 2022 with a simple idea: make startup investing 
-                    accessible to everyone, not just wealthy individuals and institutions.
-                  </p>
-                  <p>
-                    We noticed that while there was tremendous innovation happening in startups 
-                    across the country, funding was still concentrated among a small group of 
-                    investors in major tech hubs.
-                  </p>
-                  <p>
-                    By leveraging technology and regulatory changes that allow for equity 
-                    crowdfunding, we built a platform that connects promising startups with 
-                    investors of all backgrounds and financial capacities.
-                  </p>
-                  <p>
-                    Today, we've helped hundreds of startups raise the capital they need, while 
-                    giving thousands of investors the opportunity to be part of the next big thing.
-                  </p>
-                </div>
+                <p className="text-lg text-muted-foreground mb-6">
+                  StartupFundr was founded in 2022 with a simple idea: make startup investment accessible to everyone, not just venture capitalists and angel investors.
+                </p>
+                <p className="text-lg text-muted-foreground mb-6">
+                  Our team of entrepreneurs, investors, and tech enthusiasts recognized that there was an incredible amount of innovation happening in startups across the globe, but limited access to funding for many promising ventures.
+                </p>
+                <p className="text-lg text-muted-foreground mb-0">
+                  We built StartupFundr to democratize access to startup investment opportunities and help the next generation of world-changing companies find the capital they need to succeed.
+                </p>
               </div>
               <div className="relative">
-                <div className="bg-fundr-100 rounded-lg p-6 md:p-10">
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold mb-2">Our Impact</h3>
-                    <ul className="space-y-4">
-                      <li className="flex items-start">
-                        <span className="bg-fundr-200 text-fundr-800 rounded-full p-1 mr-3 mt-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </span>
-                        <div>
-                          <span className="font-bold">$50M+</span>
-                          <p className="text-sm text-muted-foreground">Total funding facilitated for startups</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-fundr-200 text-fundr-800 rounded-full p-1 mr-3 mt-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </span>
-                        <div>
-                          <span className="font-bold">250+</span>
-                          <p className="text-sm text-muted-foreground">Startups successfully funded</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-fundr-200 text-fundr-800 rounded-full p-1 mr-3 mt-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </span>
-                        <div>
-                          <span className="font-bold">15,000+</span>
-                          <p className="text-sm text-muted-foreground">Active investors on our platform</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="bg-fundr-200 text-fundr-800 rounded-full p-1 mr-3 mt-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </span>
-                        <div>
-                          <span className="font-bold">30+</span>
-                          <p className="text-sm text-muted-foreground">Industries represented</p>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
+                <img
+                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=2070"
+                  alt="Team working together at a modern office"
+                  className="rounded-lg shadow-xl"
+                />
+                <div className="absolute -bottom-6 -left-6 bg-fundr-600 text-white p-6 rounded-lg shadow-lg">
+                  <p className="text-xl font-bold mb-1">Founded 2022</p>
+                  <p className="text-sm">San Francisco, CA</p>
                 </div>
-                <div className="absolute -bottom-6 -right-6 h-24 w-24 bg-fundr-600 rounded-lg hidden md:block"></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Mission & Values */}
+        {/* Our Values section */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Our Mission & Values</h2>
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Our Values</h2>
+              <p className="text-lg text-muted-foreground">
+                The principles that guide everything we do at StartupFundr
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card>
-                <CardContent className="pt-8">
-                  <div className="h-12 w-12 bg-fundr-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-fundr-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-center">Accessibility</h3>
-                  <p className="text-center text-muted-foreground">
-                    We believe everyone should have the opportunity to invest in 
-                    startups they believe in, regardless of their financial background.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-8">
-                  <div className="h-12 w-12 bg-fundr-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-fundr-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-center">Transparency</h3>
-                  <p className="text-center text-muted-foreground">
-                    We provide clear information about startups, their business models, 
-                    and the risks involved for informed investment decisions.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-8">
-                  <div className="h-12 w-12 bg-fundr-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-fundr-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-center">Innovation</h3>
-                  <p className="text-center text-muted-foreground">
-                    We're constantly improving our platform and processes to make 
-                    startup investing easier, more efficient, and more rewarding.
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="bg-white p-8 rounded-lg shadow-md">
+                <div className="w-12 h-12 bg-fundr-100 text-fundr-600 rounded-full flex items-center justify-center mb-4">
+                  <span className="text-xl font-bold">1</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3">Transparency</h3>
+                <p className="text-muted-foreground">
+                  We believe in complete transparency with our investors and startups. Clear communication, honest evaluations, and open access to information.
+                </p>
+              </div>
+              <div className="bg-white p-8 rounded-lg shadow-md">
+                <div className="w-12 h-12 bg-fundr-100 text-fundr-600 rounded-full flex items-center justify-center mb-4">
+                  <span className="text-xl font-bold">2</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3">Accessibility</h3>
+                <p className="text-muted-foreground">
+                  Startup investment should be accessible to everyone. We're breaking down barriers to entry and democratizing access to opportunities.
+                </p>
+              </div>
+              <div className="bg-white p-8 rounded-lg shadow-md">
+                <div className="w-12 h-12 bg-fundr-100 text-fundr-600 rounded-full flex items-center justify-center mb-4">
+                  <span className="text-xl font-bold">3</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3">Innovation</h3>
+                <p className="text-muted-foreground">
+                  We support founders who are solving real problems with innovative solutions. We're constantly improving our platform to better serve them.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -188,19 +96,70 @@ const About = () => {
         {/* Team section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">Meet Our Team</h2>
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Our Team</h2>
+              <p className="text-lg text-muted-foreground">
+                Meet the passionate people behind StartupFundr
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <div key={index} className="text-center">
-                  <Avatar className="h-32 w-32 mx-auto mb-4">
-                    <AvatarImage src={member.image} alt={member.name} />
-                    <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                  <p className="text-fundr-600 mb-3">{member.role}</p>
-                  <p className="text-sm text-muted-foreground">{member.bio}</p>
+              {[
+                {
+                  name: "Jordan Chen",
+                  role: "CEO & Co-Founder",
+                  image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=1470",
+                  bio: "Former VP at a leading VC firm with 12+ years of startup investment experience."
+                },
+                {
+                  name: "Maya Rodriguez",
+                  role: "CTO & Co-Founder",
+                  image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=1587",
+                  bio: "Serial tech entrepreneur who has built and sold two fintech startups."
+                },
+                {
+                  name: "Alex Washington",
+                  role: "Head of Operations",
+                  image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1587",
+                  bio: "MBA with experience scaling operations at high-growth startups."
+                },
+                {
+                  name: "Taylor Kim",
+                  role: "Head of Startup Relations",
+                  image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1587",
+                  bio: "Former startup founder who has raised over $20M in venture funding."
+                }
+              ].map((member, index) => (
+                <div key={index} className="bg-white rounded-lg overflow-hidden shadow-md">
+                  <img 
+                    src={member.image} 
+                    alt={member.name} 
+                    className="w-full h-64 object-cover object-center"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
+                    <p className="text-fundr-600 font-medium mb-3">{member.role}</p>
+                    <p className="text-muted-foreground">{member.bio}</p>
+                  </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA section */}
+        <section className="py-16 bg-fundr-600 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-6">Join Us in Shaping the Future</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              Whether you're a startup looking for funding or an investor seeking opportunities, StartupFundr is here to help you succeed.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" variant="secondary" asChild>
+                <Link to="/startups">Browse Startups</Link>
+              </Button>
+              <Button size="lg" className="bg-white text-fundr-600 hover:bg-gray-100" asChild>
+                <Link to="/contact">Contact Us</Link>
+              </Button>
             </div>
           </div>
         </section>

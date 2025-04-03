@@ -1,336 +1,460 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { startups } from "@/data/startups";
-import { Startup } from "@/types";
-
-// Mock portfolio data
-const portfolioData = [
-  {
-    startupId: "1", // EcoHarvest
-    amount: 2500,
-    equity: 0.5,
-    date: new Date("2023-09-15"),
-    currentValue: 2750
-  },
-  {
-    startupId: "2", // Quantum Health
-    amount: 3200,
-    equity: 0.8,
-    date: new Date("2023-10-22"),
-    currentValue: 3400
-  },
-  {
-    startupId: "3", // CyberShield
-    amount: 1800,
-    equity: 0.3,
-    date: new Date("2023-11-05"),
-    currentValue: 1850
-  }
-];
-
-// Mock transaction history
-const transactionHistory = [
-  { id: "t1", type: "Investment", startupId: "1", amount: 2500, date: new Date("2023-09-15") },
-  { id: "t2", type: "Deposit", startupId: null, amount: 5000, date: new Date("2023-09-01") },
-  { id: "t3", type: "Investment", startupId: "2", amount: 3200, date: new Date("2023-10-22") },
-  { id: "t4", type: "Deposit", startupId: null, amount: 2000, date: new Date("2023-10-10") },
-  { id: "t5", type: "Investment", startupId: "3", amount: 1800, date: new Date("2023-11-05") }
-];
-
-// Colors for the pie chart
-const COLORS = ['#8B5CF6', '#EC4899', '#F97316', '#10B981', '#3B82F6'];
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { PieChart, Pie, Cell, ResponsiveContainer, Label } from "recharts";
+import { DownloadCloud, Filter, Search, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Portfolio = () => {
-  const [activeTab, setActiveTab] = useState("overview");
-  const navigate = useNavigate();
+  const [filterOpen, setFilterOpen] = useState(false);
 
-  // Calculate portfolio metrics
-  const totalInvested = portfolioData.reduce((sum, item) => sum + item.amount, 0);
-  const currentValue = portfolioData.reduce((sum, item) => sum + item.currentValue, 0);
-  const percentageChange = ((currentValue - totalInvested) / totalInvested) * 100;
-  
-  // Prepare data for pie chart
-  const pieChartData = portfolioData.map(item => {
-    const startup = startups.find(s => s.id === item.startupId) as Startup;
-    return {
-      name: startup.name,
-      value: item.amount,
-      industry: startup.industry
-    };
-  });
+  // Sample portfolio data
+  const portfolioData = [
+    {
+      id: 1,
+      name: "TechNova AI",
+      industry: "Artificial Intelligence",
+      stage: "Seed",
+      invested: "$5,000",
+      date: "Oct 12, 2023",
+      currentValue: "$6,200",
+      change: "+24%",
+      trending: "up",
+      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=1587",
+    },
+    {
+      id: 2,
+      name: "GreenEnergy Solutions",
+      industry: "Clean Energy",
+      stage: "Series A",
+      invested: "$10,000",
+      date: "Sep 28, 2023",
+      currentValue: "$11,500",
+      change: "+15%",
+      trending: "up",
+      logo: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1470",
+    },
+    {
+      id: 3,
+      name: "MediSync Health",
+      industry: "Healthcare",
+      stage: "Seed",
+      invested: "$7,500",
+      date: "Sep 15, 2023",
+      currentValue: "$8,250",
+      change: "+10%",
+      trending: "up",
+      logo: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1470",
+    },
+    {
+      id: 4,
+      name: "UrbanMobility",
+      industry: "Transportation",
+      stage: "Pre-seed",
+      invested: "$3,000",
+      date: "Aug 30, 2023",
+      currentValue: "$2,700",
+      change: "-10%",
+      trending: "down",
+      logo: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1470",
+    },
+    {
+      id: 5,
+      name: "FintechFlow",
+      industry: "Fintech",
+      stage: "Series A",
+      invested: "$15,000",
+      date: "Jul 15, 2023",
+      currentValue: "$18,750",
+      change: "+25%",
+      trending: "up",
+      logo: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&q=80&w=1470",
+    },
+    {
+      id: 6,
+      name: "EduLearn Platform",
+      industry: "Education",
+      stage: "Seed",
+      invested: "$5,000",
+      date: "Jun 22, 2023",
+      currentValue: "$4,750",
+      change: "-5%",
+      trending: "down",
+      logo: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1422",
+    },
+  ];
+
+  // Distribution by industry data
+  const industryData = [
+    { name: "AI", value: 25 },
+    { name: "Clean Energy", value: 20 },
+    { name: "Healthcare", value: 15 },
+    { name: "Fintech", value: 25 },
+    { name: "Education", value: 10 },
+    { name: "Other", value: 5 },
+  ];
+
+  // Distribution by stage data
+  const stageData = [
+    { name: "Pre-seed", value: 15 },
+    { name: "Seed", value: 45 },
+    { name: "Series A", value: 30 },
+    { name: "Series B", value: 10 },
+  ];
+
+  // Colors for the pie charts
+  const INDUSTRY_COLORS = ["#4f46e5", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#64748b"];
+  const STAGE_COLORS = ["#8b5cf6", "#4f46e5", "#3b82f6", "#06b6d4"];
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Investment Portfolio</h1>
-            <p className="text-muted-foreground">Track and manage your startup investments</p>
+      <main className="flex-grow py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">Investment Portfolio</h1>
+              <p className="text-muted-foreground">Manage and track your startup investments</p>
+            </div>
+            <div className="flex gap-2 mt-4 sm:mt-0">
+              <Button variant="outline" className="flex items-center gap-2">
+                <DownloadCloud className="h-4 w-4" />
+                Export
+              </Button>
+              <Button asChild>
+                <Link to="/startups">Invest Now</Link>
+              </Button>
+            </div>
           </div>
-          <Button className="mt-4 md:mt-0" onClick={() => navigate("/startups")}>
-            Explore More Startups
-          </Button>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Total Invested</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">${totalInvested.toLocaleString()}</div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Across {portfolioData.length} startups
-              </p>
-            </CardContent>
-          </Card>
+          {/* Portfolio Overview Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center mb-4">
+                  <p className="text-muted-foreground mb-1">Total Invested</p>
+                  <h3 className="text-3xl font-bold">$45,500</h3>
+                </div>
+                <div className="text-sm grid grid-cols-2 gap-2">
+                  <div className="bg-gray-100 rounded p-2 text-center">
+                    <p className="text-muted-foreground mb-1">Investments</p>
+                    <p className="font-medium">6</p>
+                  </div>
+                  <div className="bg-gray-100 rounded p-2 text-center">
+                    <p className="text-muted-foreground mb-1">Avg. Investment</p>
+                    <p className="font-medium">$7,583</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center mb-4">
+                  <p className="text-muted-foreground mb-1">Current Value</p>
+                  <h3 className="text-3xl font-bold">$52,150</h3>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-1 text-green-600">
+                    <TrendingUp className="h-4 w-4" />
+                    <span className="font-medium">+14.6%</span>
+                  </div>
+                  <span className="text-muted-foreground text-sm">Overall Return</span>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center mb-3">
+                  <p className="text-muted-foreground mb-1">Portfolio Allocation</p>
+                </div>
+                <div className="flex items-center justify-center gap-6 text-sm">
+                  <div className="flex flex-col items-center">
+                    <div className="w-2 h-2 rounded-full bg-fundr-600 mb-1"></div>
+                    <p className="font-medium">70%</p>
+                    <p className="text-muted-foreground">Early Stage</p>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="w-2 h-2 rounded-full bg-blue-500 mb-1"></div>
+                    <p className="font-medium">30%</p>
+                    <p className="text-muted-foreground">Growth</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Current Value</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">${currentValue.toLocaleString()}</div>
-              <div className="flex items-center mt-1">
-                <span className={`text-sm ${percentageChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {percentageChange.toFixed(2)}% {percentageChange >= 0 ? '↑' : '↓'}
-                </span>
-                <span className="text-sm text-muted-foreground ml-2">Since investment</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Portfolio Diversity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-2 flex-wrap">
-                {Array.from(new Set(portfolioData.map(item => {
-                  const startup = startups.find(s => s.id === item.startupId);
-                  return startup?.industry;
-                }))).map((industry, index) => (
-                  <Badge key={index} variant="outline" className="bg-fundr-50 text-fundr-900">
-                    {industry}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="mb-4">
-            <TabsTrigger value="overview">Portfolio Overview</TabsTrigger>
-            <TabsTrigger value="investments">Your Investments</TabsTrigger>
-            <TabsTrigger value="transactions">Transaction History</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Portfolio Allocation</CardTitle>
-                  <CardDescription>Breakdown of your investments by startup</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px]">
+          {/* Distribution Charts */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Distribution by Industry</CardTitle>
+                <CardDescription>Portfolio allocation across sectors</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[250px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={pieChartData}
+                        data={industryData}
                         cx="50%"
                         cy="50%"
-                        labelLine={false}
+                        innerRadius={60}
                         outerRadius={80}
-                        fill="#8884d8"
+                        paddingAngle={2}
                         dataKey="value"
-                        nameKey="name"
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
-                        {pieChartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        {industryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={INDUSTRY_COLORS[index % INDUSTRY_COLORS.length]} />
                         ))}
+                        <Label
+                          content={({ viewBox }) => {
+                            const { cx, cy } = viewBox as { cx: number; cy: number };
+                            return (
+                              <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                                <tspan x={cx} y={cy} dy="-0.5em" fontSize="12" fill="#888">
+                                  Total
+                                </tspan>
+                                <tspan x={cx} y={cy} dy="1.5em" fontSize="14" fontWeight="bold" fill="#333">
+                                  6 Industries
+                                </tspan>
+                              </text>
+                            );
+                          }}
+                        />
                       </Pie>
-                      <Tooltip 
-                        formatter={(value) => [`$${value}`, 'Investment Amount']}
-                      />
                     </PieChart>
                   </ResponsiveContainer>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                  {industryData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: INDUSTRY_COLORS[index % INDUSTRY_COLORS.length] }}
+                      ></div>
+                      <span className="text-xs">{item.name} ({item.value}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Distribution by Stage</CardTitle>
+                <CardDescription>Investment across funding stages</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={stageData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {stageData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={STAGE_COLORS[index % STAGE_COLORS.length]} />
+                        ))}
+                        <Label
+                          content={({ viewBox }) => {
+                            const { cx, cy } = viewBox as { cx: number; cy: number };
+                            return (
+                              <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                                <tspan x={cx} y={cy} dy="-0.5em" fontSize="12" fill="#888">
+                                  Focus
+                                </tspan>
+                                <tspan x={cx} y={cy} dy="1.5em" fontSize="14" fontWeight="bold" fill="#333">
+                                  Seed Stage
+                                </tspan>
+                              </text>
+                            );
+                          }}
+                        />
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  {stageData.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: STAGE_COLORS[index % STAGE_COLORS.length] }}
+                      ></div>
+                      <span className="text-xs">{item.name} ({item.value}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Investment Performance</CardTitle>
-                  <CardDescription>Current value vs. initial investment</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {portfolioData.map((item, index) => {
-                      const startup = startups.find(s => s.id === item.startupId) as Startup;
-                      const performancePercentage = ((item.currentValue - item.amount) / item.amount) * 100;
-                      
-                      return (
-                        <div key={index} className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center">
-                              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mr-2">
-                                <img 
-                                  src={startup.logoUrl} 
-                                  alt={`${startup.name} logo`} 
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <span className="font-medium">{startup.name}</span>
-                            </div>
-                            <div className="text-right">
-                              <span className={`text-sm font-medium ${performancePercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {performancePercentage.toFixed(2)}% {performancePercentage >= 0 ? '↑' : '↓'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                            <span>Initial: ${item.amount.toLocaleString()}</span>
-                            <span>Current: ${item.currentValue.toLocaleString()}</span>
-                          </div>
-                          <Progress 
-                            value={Math.min(100, (item.currentValue / item.amount) * 100)} 
-                            className="h-2" 
-                          />
-                        </div>
-                      );
-                    })}
+          {/* Portfolio List */}
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Investment Portfolio</CardTitle>
+                  <CardDescription>All your current startup investments</CardDescription>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="relative w-full sm:w-auto">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search investments..."
+                      className="pl-8 w-full"
+                    />
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="investments">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Startup Investments</CardTitle>
-                <CardDescription>Detailed view of each investment</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {portfolioData.map((item, index) => {
-                    const startup = startups.find(s => s.id === item.startupId) as Startup;
-                    
-                    return (
-                      <div key={index} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mr-3">
-                              <img 
-                                src={startup.logoUrl} 
-                                alt={`${startup.name} logo`} 
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold">{startup.name}</h3>
-                              <p className="text-sm text-muted-foreground">{startup.industry}</p>
-                            </div>
-                          </div>
-                          <Badge variant="outline" className="bg-fundr-50 text-fundr-800">
-                            {item.equity}% Equity
-                          </Badge>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Investment Date</p>
-                            <p className="font-medium">{item.date.toLocaleDateString()}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Investment Amount</p>
-                            <p className="font-medium">${item.amount.toLocaleString()}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Current Value</p>
-                            <p className="font-medium">${item.currentValue.toLocaleString()}</p>
-                          </div>
-                        </div>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => navigate(`/startups/${startup.id}`)}
-                        >
-                          View Startup
-                        </Button>
-                      </div>
-                    );
-                  })}
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => setFilterOpen(!filterOpen)}
+                    className={filterOpen ? "bg-gray-100" : ""}
+                  >
+                    <Filter className="h-4 w-4" />
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="transactions">
-            <Card>
-              <CardHeader>
-                <CardTitle>Transaction History</CardTitle>
-                <CardDescription>Record of your deposits and investments</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {transactionHistory.sort((a, b) => b.date.getTime() - a.date.getTime()).map((transaction, index) => {
-                    const startup = transaction.startupId 
-                      ? startups.find(s => s.id === transaction.startupId) 
-                      : null;
-                    
-                    return (
-                      <div key={index} className="flex justify-between items-center py-3 border-b">
-                        <div className="flex items-center">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                            transaction.type === "Investment" ? "bg-fundr-100" : "bg-green-100"
-                          }`}>
-                            <span className={`text-lg ${
-                              transaction.type === "Investment" ? "text-fundr-600" : "text-green-600"
-                            }`}>
-                              {transaction.type === "Investment" ? "I" : "D"}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-medium">
-                              {transaction.type === "Investment" 
-                                ? `Investment in ${startup?.name}` 
-                                : "Wallet Deposit"
-                              }
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {transaction.date.toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold">
-                            {transaction.type === "Investment" ? "-" : "+"}${transaction.amount.toLocaleString()}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {transaction.type === "Investment" ? "Invested" : "Added to wallet"}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
+              </div>
+              {filterOpen && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 pt-4 border-t">
+                  <Select defaultValue="all">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Industries</SelectItem>
+                      <SelectItem value="ai">Artificial Intelligence</SelectItem>
+                      <SelectItem value="cleanenergy">Clean Energy</SelectItem>
+                      <SelectItem value="healthcare">Healthcare</SelectItem>
+                      <SelectItem value="fintech">Fintech</SelectItem>
+                      <SelectItem value="education">Education</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select defaultValue="all">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Stage" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Stages</SelectItem>
+                      <SelectItem value="preseed">Pre-seed</SelectItem>
+                      <SelectItem value="seed">Seed</SelectItem>
+                      <SelectItem value="seriesa">Series A</SelectItem>
+                      <SelectItem value="seriesb">Series B</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select defaultValue="date">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sort By" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="date">Date (Newest)</SelectItem>
+                      <SelectItem value="amount">Amount (Highest)</SelectItem>
+                      <SelectItem value="return">Return (Highest)</SelectItem>
+                      <SelectItem value="name">Name (A-Z)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              )}
+            </CardHeader>
+            <CardContent className="p-0">
+              <Tabs defaultValue="active">
+                <div className="px-6 border-b">
+                  <TabsList className="-mb-px">
+                    <TabsTrigger value="active">Active (6)</TabsTrigger>
+                    <TabsTrigger value="exited">Exited (2)</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="active" className="pt-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left p-4 font-medium">Startup</th>
+                          <th className="text-left p-4 font-medium">Industry</th>
+                          <th className="text-left p-4 font-medium">Stage</th>
+                          <th className="text-left p-4 font-medium">Invested</th>
+                          <th className="text-left p-4 font-medium">Current Value</th>
+                          <th className="text-left p-4 font-medium">Change</th>
+                          <th className="text-right p-4 font-medium">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {portfolioData.map((investment) => (
+                          <tr key={investment.id} className="border-b last:border-0 hover:bg-gray-50">
+                            <td className="p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                                  <img 
+                                    src={investment.logo} 
+                                    alt={investment.name} 
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div>
+                                  <div className="font-medium">{investment.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    Invested: {investment.date}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4">{investment.industry}</td>
+                            <td className="p-4">{investment.stage}</td>
+                            <td className="p-4">{investment.invested}</td>
+                            <td className="p-4">{investment.currentValue}</td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-1">
+                                {investment.trending === "up" ? (
+                                  <ArrowUpRight className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <ArrowDownRight className="h-4 w-4 text-red-500" />
+                                )}
+                                <span 
+                                  className={investment.trending === "up" ? "text-green-500" : "text-red-500"}
+                                >
+                                  {investment.change}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-right">
+                              <Button variant="ghost" size="sm" asChild>
+                                <Link to={`/startups/${investment.id}`}>View Details</Link>
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </TabsContent>
+                <TabsContent value="exited" className="p-6">
+                  <div className="text-center py-10">
+                    <h3 className="text-lg font-medium mb-2">Exited Investments</h3>
+                    <p className="text-muted-foreground mb-0">
+                      Your previous investments that have been exited will appear here.
+                    </p>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       </main>
       <Footer />
     </div>

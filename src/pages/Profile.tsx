@@ -2,73 +2,26 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-
-// Mock user profile data
-const userProfile = {
-  id: "u1",
-  name: "Alex Johnson",
-  email: "alex@example.com",
-  bio: "Tech enthusiast and angel investor with a focus on sustainability and healthcare innovations.",
-  location: "San Francisco, CA",
-  occupation: "Product Manager at Tech Co.",
-  joinedDate: "January 2023",
-  profileImageUrl: "",
-  interests: ["HealthTech", "CleanTech", "FinTech", "AI", "SaaS"],
-  investmentPreferences: {
-    minAmount: 500,
-    maxAmount: 5000,
-    industries: ["HealthTech", "CleanTech"],
-    stage: ["Seed", "Series A"],
-    notificationFrequency: "weekly"
-  }
-};
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Check, Pencil, UserCircle } from "lucide-react";
 
 const Profile = () => {
-  const [profile, setProfile] = useState(userProfile);
   const [editing, setEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile");
-  const { toast } = useToast();
-
-  // Form state
-  const [formData, setFormData] = useState({
-    name: profile.name,
-    email: profile.email,
-    bio: profile.bio,
-    location: profile.location,
-    occupation: profile.occupation
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveProfile = () => {
-    setProfile(prev => ({ ...prev, ...formData }));
-    setEditing(false);
+  
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
     toast({
       title: "Profile updated",
-      description: "Your profile information has been saved successfully.",
-    });
-  };
-
-  const handleCancelEdit = () => {
-    setFormData({
-      name: profile.name,
-      email: profile.email,
-      bio: profile.bio,
-      location: profile.location,
-      occupation: profile.occupation
+      description: "Your profile information has been updated successfully.",
     });
     setEditing(false);
   };
@@ -76,157 +29,153 @@ const Profile = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left column - Profile sidebar */}
-          <div>
-            <Card className="mb-6">
-              <CardContent className="pt-6 flex flex-col items-center">
-                <Avatar className="h-24 w-24 mb-4">
-                  <AvatarFallback className="text-xl">{profile.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+      <main className="flex-grow py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=1470" alt="John Doe" />
+                  <AvatarFallback><UserCircle className="h-12 w-12" /></AvatarFallback>
                 </Avatar>
-                <h2 className="text-xl font-bold">{profile.name}</h2>
-                <p className="text-sm text-muted-foreground mb-2">{profile.email}</p>
-                <p className="text-sm text-center mb-4">{profile.occupation}</p>
-                <div className="flex flex-wrap gap-2 justify-center mb-4">
-                  {profile.interests.map(interest => (
-                    <Badge key={interest} variant="outline">{interest}</Badge>
-                  ))}
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">John Doe</h1>
+                  <p className="text-muted-foreground">Investor since April 2023</p>
                 </div>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => setEditing(true)}
-                  disabled={editing}
-                >
-                  Edit Profile
-                </Button>
-              </CardContent>
-            </Card>
+              </div>
+              <Button className="mt-4 md:mt-0" onClick={() => setEditing(!editing)}>
+                {editing ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Finish Editing
+                  </>
+                ) : (
+                  <>
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </>
+                )}
+              </Button>
+            </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Account Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium">Member Since</p>
-                  <p className="text-sm text-muted-foreground">{profile.joinedDate}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Location</p>
-                  <p className="text-sm text-muted-foreground">{profile.location}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Email Verification</p>
-                  <Badge variant="outline" className="bg-green-50 text-green-700">Verified</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right column - Main content */}
-          <div className="lg:col-span-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-              <TabsList className="mb-4">
-                <TabsTrigger value="profile">Profile Details</TabsTrigger>
+            <Tabs defaultValue="profile">
+              <TabsList className="mb-6">
+                <TabsTrigger value="profile">Profile Information</TabsTrigger>
                 <TabsTrigger value="preferences">Investment Preferences</TabsTrigger>
-                <TabsTrigger value="security">Security</TabsTrigger>
+                <TabsTrigger value="security">Security & Privacy</TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Profile Information</CardTitle>
-                    <CardDescription>
-                      {editing 
-                        ? "Edit your personal information below" 
-                        : "View and manage your personal information"
-                      }
-                    </CardDescription>
+                    <CardTitle>Personal Information</CardTitle>
+                    <CardDescription>Update your personal details</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {editing ? (
-                      // Edit form
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input 
-                              id="name"
-                              name="name"
-                              value={formData.name}
-                              onChange={handleInputChange}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input 
-                              id="email"
-                              name="email"
-                              type="email"
-                              value={formData.email}
-                              onChange={handleInputChange}
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="location">Location</Label>
-                            <Input 
-                              id="location"
-                              name="location"
-                              value={formData.location}
-                              onChange={handleInputChange}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="occupation">Occupation</Label>
-                            <Input 
-                              id="occupation"
-                              name="occupation"
-                              value={formData.occupation}
-                              onChange={handleInputChange}
-                            />
-                          </div>
+                  <CardContent>
+                    <form onSubmit={handleSaveProfile}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="firstName">First Name</Label>
+                          <Input 
+                            id="firstName" 
+                            defaultValue="John"
+                            disabled={!editing}
+                          />
                         </div>
                         <div className="space-y-2">
+                          <Label htmlFor="lastName">Last Name</Label>
+                          <Input 
+                            id="lastName" 
+                            defaultValue="Doe"
+                            disabled={!editing}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email Address</Label>
+                          <Input 
+                            id="email" 
+                            type="email"
+                            defaultValue="john.doe@example.com"
+                            disabled={!editing}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone Number</Label>
+                          <Input 
+                            id="phone" 
+                            defaultValue="+1 (555) 123-4567"
+                            disabled={!editing}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label htmlFor="location">Location</Label>
+                          <Input 
+                            id="location" 
+                            defaultValue="San Francisco, CA, United States"
+                            disabled={!editing}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
                           <Label htmlFor="bio">Bio</Label>
                           <Textarea 
                             id="bio" 
-                            name="bio"
-                            value={formData.bio}
-                            onChange={handleInputChange}
                             rows={4}
+                            defaultValue="Tech investor with a focus on AI and sustainability startups. Previously worked at Google and founded a SaaS startup. Looking to support innovative teams solving meaningful problems."
+                            disabled={!editing}
                           />
                         </div>
-                      </div>
-                    ) : (
-                      // View mode
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="font-medium">Bio</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{profile.bio}</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <h3 className="font-medium">Location</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{profile.location}</p>
+                        
+                        {editing && (
+                          <div className="md:col-span-2 flex justify-end">
+                            <Button type="submit">Save Changes</Button>
                           </div>
-                          <div>
-                            <h3 className="font-medium">Occupation</h3>
-                            <p className="text-sm text-muted-foreground mt-1">{profile.occupation}</p>
-                          </div>
-                        </div>
+                        )}
                       </div>
-                    )}
+                    </form>
                   </CardContent>
-                  {editing && (
-                    <CardFooter className="flex justify-end gap-2">
-                      <Button variant="outline" onClick={handleCancelEdit}>Cancel</Button>
-                      <Button onClick={handleSaveProfile}>Save Changes</Button>
-                    </CardFooter>
-                  )}
+                </Card>
+
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Professional Information</CardTitle>
+                    <CardDescription>Share your professional background</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSaveProfile}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="company">Current Company</Label>
+                          <Input 
+                            id="company" 
+                            defaultValue="Innovate Partners"
+                            disabled={!editing}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="position">Job Title</Label>
+                          <Input 
+                            id="position" 
+                            defaultValue="Chief Innovation Officer"
+                            disabled={!editing}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label htmlFor="linkedin">LinkedIn Profile</Label>
+                          <Input 
+                            id="linkedin" 
+                            defaultValue="https://linkedin.com/in/johndoe"
+                            disabled={!editing}
+                          />
+                        </div>
+                        
+                        {editing && (
+                          <div className="md:col-span-2 flex justify-end">
+                            <Button type="submit">Save Changes</Button>
+                          </div>
+                        )}
+                      </div>
+                    </form>
+                  </CardContent>
                 </Card>
               </TabsContent>
 
@@ -234,92 +183,93 @@ const Profile = () => {
                 <Card>
                   <CardHeader>
                     <CardTitle>Investment Preferences</CardTitle>
-                    <CardDescription>
-                      Customize your investment criteria and interests
-                    </CardDescription>
+                    <CardDescription>Customize your investment criteria</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">Investment Amount Range</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="minAmount">Minimum ($)</Label>
-                          <Input 
-                            id="minAmount" 
-                            type="number" 
-                            value={profile.investmentPreferences.minAmount} 
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="maxAmount">Maximum ($)</Label>
-                          <Input 
-                            id="maxAmount" 
-                            type="number" 
-                            value={profile.investmentPreferences.maxAmount} 
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">Preferred Industries</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {["HealthTech", "CleanTech", "FinTech", "AI", "SaaS", "EdTech"].map(industry => (
-                          <Badge 
-                            key={industry} 
-                            variant={profile.investmentPreferences.industries.includes(industry) ? "default" : "outline"}
-                            className="cursor-pointer"
-                          >
-                            {industry}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">Startup Stage</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {["Pre-seed", "Seed", "Series A", "Series B", "Growth"].map(stage => (
-                          <Badge 
-                            key={stage} 
-                            variant={profile.investmentPreferences.stage.includes(stage) ? "default" : "outline"}
-                            className="cursor-pointer"
-                          >
-                            {stage}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-medium">Notification Preferences</h3>
-                      <div className="flex items-center justify-between">
+                  <CardContent>
+                    <form onSubmit={handleSaveProfile}>
+                      <div className="space-y-6">
                         <div>
-                          <Label htmlFor="email-notifications" className="font-medium">
-                            Email Notifications
-                          </Label>
-                          <p className="text-sm text-muted-foreground">
-                            Receive updates about your investments
-                          </p>
+                          <h3 className="text-lg font-medium mb-4">Industries of Interest</h3>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            {["Artificial Intelligence", "Healthcare", "Fintech", "Clean Energy", "Education", "E-commerce", "SaaS", "Blockchain", "Consumer Products"].map((industry) => (
+                              <div key={industry} className="flex items-center space-x-2">
+                                <input 
+                                  type="checkbox" 
+                                  id={industry.toLowerCase().replace(/\s+/g, '-')} 
+                                  className="h-4 w-4 rounded border-gray-300 text-fundr-600 focus:ring-fundr-600"
+                                  defaultChecked={["Artificial Intelligence", "Fintech", "SaaS", "Clean Energy"].includes(industry)}
+                                  disabled={!editing}
+                                />
+                                <Label 
+                                  htmlFor={industry.toLowerCase().replace(/\s+/g, '-')}
+                                  className="text-sm font-normal"
+                                >
+                                  {industry}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <Switch id="email-notifications" defaultChecked={true} />
-                      </div>
-                      <div className="flex items-center justify-between">
+                        
+                        <Separator />
+                        
                         <div>
-                          <Label htmlFor="new-opportunities" className="font-medium">
-                            New Investment Opportunities
-                          </Label>
-                          <p className="text-sm text-muted-foreground">
-                            Get notified about startups matching your interests
-                          </p>
+                          <h3 className="text-lg font-medium mb-4">Investment Range</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <Label htmlFor="minInvestment">Minimum Investment ($)</Label>
+                              <Input 
+                                id="minInvestment" 
+                                type="number" 
+                                defaultValue="1000"
+                                disabled={!editing}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="maxInvestment">Maximum Investment ($)</Label>
+                              <Input 
+                                id="maxInvestment" 
+                                type="number" 
+                                defaultValue="50000"
+                                disabled={!editing}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <Switch id="new-opportunities" defaultChecked={true} />
+                        
+                        <Separator />
+                        
+                        <div>
+                          <h3 className="text-lg font-medium mb-4">Startup Stage Preferences</h3>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {["Pre-seed", "Seed", "Series A", "Series B", "Growth Stage", "Pre-IPO"].map((stage) => (
+                              <div key={stage} className="flex items-center space-x-2">
+                                <input 
+                                  type="checkbox" 
+                                  id={stage.toLowerCase().replace(/\s+/g, '-')} 
+                                  className="h-4 w-4 rounded border-gray-300 text-fundr-600 focus:ring-fundr-600"
+                                  defaultChecked={["Pre-seed", "Seed", "Series A"].includes(stage)}
+                                  disabled={!editing}
+                                />
+                                <Label 
+                                  htmlFor={stage.toLowerCase().replace(/\s+/g, '-')}
+                                  className="text-sm font-normal"
+                                >
+                                  {stage}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {editing && (
+                          <div className="flex justify-end">
+                            <Button type="submit">Save Preferences</Button>
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    </form>
                   </CardContent>
-                  <CardFooter>
-                    <Button className="ml-auto">Save Preferences</Button>
-                  </CardFooter>
                 </Card>
               </TabsContent>
 
@@ -327,40 +277,98 @@ const Profile = () => {
                 <Card>
                   <CardHeader>
                     <CardTitle>Security Settings</CardTitle>
-                    <CardDescription>
-                      Manage your account security and password
-                    </CardDescription>
+                    <CardDescription>Manage your account security</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-medium">Change Password</h3>
-                      <div className="space-y-2">
-                        <Label htmlFor="currentPassword">Current Password</Label>
-                        <Input id="currentPassword" type="password" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="newPassword">New Password</Label>
-                        <Input id="newPassword" type="password" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                        <Input id="confirmPassword" type="password" />
-                      </div>
-                      <Button>Update Password</Button>
-                    </div>
-
-                    <div className="border-t pt-6 space-y-4">
-                      <h3 className="text-sm font-medium">Two-Factor Authentication</h3>
-                      <div className="flex items-center justify-between">
+                  <CardContent>
+                    <form onSubmit={handleSaveProfile}>
+                      <div className="space-y-6">
                         <div>
-                          <p className="font-medium">Enable 2FA</p>
-                          <p className="text-sm text-muted-foreground">
-                            Add an extra layer of security to your account
-                          </p>
+                          <h3 className="text-lg font-medium mb-4">Change Password</h3>
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="currentPassword">Current Password</Label>
+                              <Input 
+                                id="currentPassword" 
+                                type="password"
+                                disabled={!editing}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="newPassword">New Password</Label>
+                              <Input 
+                                id="newPassword" 
+                                type="password"
+                                disabled={!editing}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                              <Input 
+                                id="confirmPassword" 
+                                type="password"
+                                disabled={!editing}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <Switch id="2fa" />
+                        
+                        <Separator />
+                        
+                        <div>
+                          <h3 className="text-lg font-medium mb-4">Two-Factor Authentication</h3>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium">Enable Two-Factor Authentication</p>
+                              <p className="text-sm text-muted-foreground">
+                                Add an extra layer of security to your account
+                              </p>
+                            </div>
+                            <Switch 
+                              checked={true}
+                              disabled={!editing}
+                            />
+                          </div>
+                        </div>
+                        
+                        <Separator />
+                        
+                        <div>
+                          <h3 className="text-lg font-medium mb-4">Privacy Settings</h3>
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-medium">Profile Visibility</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Allow other investors to see your profile
+                                </p>
+                              </div>
+                              <Switch 
+                                checked={true}
+                                disabled={!editing}
+                              />
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-medium">Investment Activity</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Show your investment activity in public feeds
+                                </p>
+                              </div>
+                              <Switch 
+                                checked={false}
+                                disabled={!editing}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {editing && (
+                          <div className="flex justify-end">
+                            <Button type="submit">Save Security Settings</Button>
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    </form>
                   </CardContent>
                 </Card>
               </TabsContent>
