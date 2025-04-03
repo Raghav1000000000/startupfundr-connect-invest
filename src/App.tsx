@@ -7,6 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Startups from "./pages/Startups";
 import StartupDetail from "./pages/StartupDetail";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Portfolio from "./pages/Portfolio";
+import About from "./pages/About";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import React from "react";
 
@@ -32,6 +38,12 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/startups" element={<Startups />} />
               <Route path="/startups/:id" element={<StartupDetail />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<Contact />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
