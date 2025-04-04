@@ -17,6 +17,15 @@ import NotFound from "./pages/NotFound";
 import HowItWorks from "./pages/HowItWorks";
 import StartupResources from "./pages/StartupResources";
 import React from "react";
+import RaiseCapital from "./pages/RaiseCapital";
+import StartupApplication from "./pages/StartupApplication";
+import SuccessStories from "./pages/SuccessStories";
+import Team from "./pages/Team";
+import Careers from "./pages/Careers";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Legal from "./pages/Legal";
+import InvestmentGuide from "./pages/InvestmentGuide";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -48,6 +57,22 @@ const App = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/startup-resources" element={<StartupResources />} />
+              
+              {/* Startup section pages */}
+              <Route path="/raise-capital" element={<RaiseCapital />} />
+              <Route path="/startup-application" element={<StartupApplication />} />
+              <Route path="/success-stories" element={<SuccessStories />} />
+              <Route path="/investment-guide" element={<InvestmentGuide />} />
+              
+              {/* Company section pages */}
+              <Route path="/team" element={<Team />} />
+              <Route path="/careers" element={<Careers />} />
+              
+              {/* Legal pages */}
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/legal" element={<Legal />} />
+              
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
