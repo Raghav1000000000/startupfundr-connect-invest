@@ -1,4 +1,3 @@
-
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,7 @@ export default function Legal() {
                     Information about how we use cookies and similar technologies.
                   </p>
                   <Button variant="outline" className="w-full">
-                    View Cookie Policy
+                    <Link to="/cookie-policy">View Cookie Policy</Link>
                   </Button>
                 </div>
                 
