@@ -15,6 +15,7 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import HowItWorks from "./pages/HowItWorks";
+import StartupResources from "./pages/StartupResources";
 import React from "react";
 
 // Create a client
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/startup-resources" element={<StartupResources />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -13,6 +13,9 @@ const NavLinks = () => {
       <Link to="/dashboard" className="text-sm md:text-base font-medium hover:text-fundr-600 transition-colors">
         Dashboard
       </Link>
+      <Link to="/startup-resources" className="text-sm md:text-base font-medium hover:text-fundr-600 transition-colors">
+        Resources
+      </Link>
       <Link to="/about" className="text-sm md:text-base font-medium hover:text-fundr-600 transition-colors">
         About
       </Link>

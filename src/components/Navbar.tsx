@@ -25,6 +25,9 @@ export default function Navbar() {
           <Link to="/startups" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
             Explore Startups
           </Link>
+          <Link to="/startup-resources" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
+            Resources
+          </Link>
           <Link to="/how-it-works" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
             How It Works
           </Link>
@@ -72,6 +75,13 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Explore Startups
+            </Link>
+            <Link
+              to="/startup-resources"
+              className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Resources
             </Link>
             <Link
               to="/how-it-works"
