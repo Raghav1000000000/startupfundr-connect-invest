@@ -48,7 +48,7 @@ export default function ForgotPassword() {
         <div className="w-full max-w-md px-4">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold">Reset Password</h1>
-            <p className="text-muted-foreground mt-2">We'll send you a link to reset your password</p>
+            <p className="text-muted-foreground mt-2">We'll email you a link to reset your password</p>
           </div>
           
           {!isSubmitted ? (
@@ -86,6 +86,7 @@ export default function ForgotPassword() {
             <div className="text-center">
               <div className="mb-6 p-4 bg-green-50 rounded-md text-green-700">
                 <p>Check your email for a password reset link.</p>
+                <p className="mt-2 text-sm">The link will expire in 30 minutes.</p>
               </div>
               <Button asChild variant="outline" className="mt-4">
                 <Link to="/login">Return to Login</Link>
