@@ -1,8 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Menu, X, Bell, User } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,296 +17,364 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import NotificationCenter from "./NotificationCenter";
-import { Notification } from "./NotificationCenter";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Menu, X, ChevronDown, User, Settings, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useMobile } from "@/hooks/use-mobile";
+import NavLinks from "@/components/NavLinks";
+import NotificationCenter from "@/components/NotificationCenter";
 import { toast } from "@/components/ui/use-toast";
 
-export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userType, setUserType] = useState<string | null>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const navigate = useNavigate();
-
-  // Check if user is logged in
-  useEffect(() => {
-    const authStatus = localStorage.getItem("isAuthenticated") === "true";
-    const userTypeFromStorage = localStorage.getItem("userType");
-    setIsAuthenticated(authStatus);
-    setUserType(userTypeFromStorage);
-    
-    // If authenticated, load sample notifications
-    if (authStatus) {
-      setNotifications([
-        {
-          id: "1",
-          title: "Investment Successful",
-          content: "Your investment of $5,000 in TechNova AI has been processed successfully.",
-          date: new Date(Date.now() - 20 * 60 * 1000), // 20 minutes ago
-          isRead: false,
-          type: "transaction",
-        },
-        {
-          id: "2",
-          title: "Quarterly Update",
-          content: "GreenEnergy Solutions has posted their Q3 financial report. Check it out!",
-          date: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
-          isRead: true,
-          type: "update",
-        },
-        {
-          id: "3",
-          title: "New Investment Opportunity",
-          content: "A new startup in the healthcare sector is now open for funding.",
-          date: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
-          isRead: false,
-          type: "alert",
-        },
-      ]);
-    }
-  }, []);
+const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // In a real application, this would come from authentication context
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const isMobile = useMobile();
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userType");
-    setIsAuthenticated(false);
-    setUserType(null);
+    // In a real app, this would call your authentication service
     toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
+      title: "Signed out",
+      description: "You have been signed out successfully.",
     });
-    navigate("/");
-  };
-
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, isRead: true } 
-          : notification
-      )
-    );
-  };
-
-  const handleMarkAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, isRead: true }))
-    );
-  };
-
-  const handleClearAll = () => {
-    setNotifications([]);
+    // Would normally redirect to home or login page
+    setIsAuthenticated(false);
   };
 
   return (
-    <nav className="border-b">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-fundr-700">Startup</span>
-            <span className="text-2xl font-bold text-success-600">Fundr</span>
-          </Link>
-        </div>
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
+      <div className="container flex h-16 items-center px-4 sm:px-8">
+        <Link to="/" className="flex items-center space-x-2 mr-4">
+          <span className="font-bold text-xl sm:text-2xl text-fundr-600">StartupFundr</span>
+        </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
-            Home
-          </Link>
-          <Link to="/startups" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
-            Explore Startups
-          </Link>
-          <Link to="/startup-resources" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
-            Resources
-          </Link>
-          <Link to="/how-it-works" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
-            How It Works
-          </Link>
-          <Link to="/about" className="text-gray-700 hover:text-fundr-600 transition-colors font-medium">
-            About Us
-          </Link>
-        </div>
-
-        <div className="hidden md:flex items-center space-x-4">
-          {isAuthenticated ? (
-            <>
-              <NotificationCenter 
-                notifications={notifications} 
-                onMarkAsRead={handleMarkAsRead}
-                onMarkAllAsRead={handleMarkAllAsRead}
-                onClearAll={handleClearAll}
-              />
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile">Profile</Link>
-                  </DropdownMenuItem>
-                  {userType === "investor" && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/portfolio">Portfolio</Link>
-                    </DropdownMenuItem>
-                  )}
-                  {userType === "startup" && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/startup-dashboard">My Startup</Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    Log Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <>
-              <Button variant="outline" className="font-medium" asChild>
-                <Link to="/login">Log In</Link>
-              </Button>
-              <Button className="bg-fundr-600 hover:bg-fundr-700 font-medium" asChild>
-                <Link to="/signup">Sign Up</Link>
-              </Button>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center">
-          {isAuthenticated && (
-            <NotificationCenter 
-              notifications={notifications} 
-              onMarkAsRead={handleMarkAsRead}
-              onMarkAllAsRead={handleMarkAllAsRead}
-              onClearAll={handleClearAll}
-            />
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden py-4 px-4 bg-white border-b">
-          <div className="flex flex-col space-y-4">
-            <Link
-              to="/"
-              className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-              onClick={() => setIsMenuOpen(false)}
+        {isMobile ? (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-auto"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              Home
-            </Link>
-            <Link
-              to="/startups"
-              className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Explore Startups
-            </Link>
-            <Link
-              to="/startup-resources"
-              className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Resources
-            </Link>
-            <Link
-              to="/how-it-works"
-              className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              How It Works
-            </Link>
-            <Link
-              to="/about"
-              className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About Us
-            </Link>
+              {isMobileMenuOpen ? <X /> : <Menu />}
+            </Button>
             
-            {isAuthenticated ? (
-              <>
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-muted-foreground mb-2">Account</p>
-                </div>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
+            {isMobileMenuOpen && (
+              <div className="fixed inset-0 top-16 z-50 bg-background p-6 flex flex-col space-y-4 animate-in slide-in-from-top-5">
+                <Link to="/" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  Home
+                </Link>
+                <Link to="/startups" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  Startups
+                </Link>
+                <Link to="/dashboard" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
                   Dashboard
                 </Link>
-                <Link
-                  to="/profile"
-                  className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Profile
+                <Link to="/startup-resources" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  Resources
                 </Link>
-                {userType === "investor" && (
-                  <Link
-                    to="/portfolio"
-                    className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Portfolio
-                  </Link>
-                )}
-                {userType === "startup" && (
-                  <Link
-                    to="/startup-dashboard"
-                    className="text-gray-700 hover:text-fundr-600 transition-colors font-medium py-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    My Startup
-                  </Link>
-                )}
-                <Button 
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  variant="ghost" 
-                  className="justify-start px-2 font-medium py-2 h-auto"
-                >
-                  Log Out
-                </Button>
-              </>
-            ) : (
-              <div className="flex flex-col space-y-2 pt-4 border-t">
-                <Button variant="outline" className="w-full font-medium" asChild>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    Log In
-                  </Link>
-                </Button>
-                <Button className="w-full bg-fundr-600 hover:bg-fundr-700 font-medium" asChild>
-                  <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                    Sign Up
-                  </Link>
-                </Button>
+                <Link to="/about" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  About
+                </Link>
+                <Link to="/faq" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  FAQ
+                </Link>
+                <Link to="/contact" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                  Contact
+                </Link>
+                
+                <div className="mt-4 pt-4 border-t">
+                  {isAuthenticated ? (
+                    <>
+                      <Link to="/profile" className="px-4 py-2 font-medium hover:text-fundr-600 flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                      </Link>
+                      <Link to="/portfolio" className="px-4 py-2 font-medium hover:text-fundr-600" onClick={() => setIsMobileMenuOpen(false)}>
+                        Portfolio
+                      </Link>
+                      <button 
+                        className="px-4 py-2 font-medium hover:text-fundr-600 flex items-center w-full text-left"
+                        onClick={() => {
+                          handleLogout();
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      <Button asChild>
+                        <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                          Sign In
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline">
+                        <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                          Sign Up
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-          </div>
-        </div>
-      )}
-    </nav>
+          </>
+        ) : (
+          <>
+            <NavigationMenu className="hidden md:flex mx-6">
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Invest</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] grid-cols-2">
+                      <li className="col-span-2">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/startups"
+                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-fundr-100 to-fundr-200 p-6 no-underline outline-none focus:shadow-md"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <div className="mb-2 mt-4 text-lg font-medium">
+                              Discover Startups
+                            </div>
+                            <p className="text-sm leading-tight text-muted-foreground">
+                              Browse and invest in innovative startups across various industries.
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <ListItem
+                        title="Portfolio"
+                        href="/portfolio"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Track your investments and monitor performance
+                      </ListItem>
+                      <ListItem
+                        title="How It Works"
+                        href="/how-it-works"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Learn about our investment process
+                      </ListItem>
+                      <ListItem
+                        title="Investment Guide"
+                        href="/investment-guide"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Resources for making informed decisions
+                      </ListItem>
+                      <ListItem
+                        title="Success Stories"
+                        href="/success-stories"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        See startups that successfully raised funding
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Raise</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] grid-cols-2">
+                      <li className="col-span-2">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/raise-capital"
+                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-success-100 to-success-200 p-6 no-underline outline-none focus:shadow-md"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <div className="mb-2 mt-4 text-lg font-medium">
+                              Raise Capital
+                            </div>
+                            <p className="text-sm leading-tight text-muted-foreground">
+                              Connect with investors and get the funding your startup needs to grow.
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <ListItem
+                        title="Apply Now"
+                        href="/startup-application"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Submit your startup for consideration
+                      </ListItem>
+                      <ListItem
+                        title="Startup Resources"
+                        href="/startup-resources"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Helpful tools and guides for founders
+                      </ListItem>
+                      <ListItem
+                        title="Pitch Tips"
+                        href="/startup-resources#pitch-tips"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        How to create a compelling startup pitch
+                      </ListItem>
+                      <ListItem
+                        title="Investor Network"
+                        href="/investor-network"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Learn about our investor community
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>About</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] grid-cols-2">
+                      <ListItem
+                        title="About Us"
+                        href="/about"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Our mission and vision
+                      </ListItem>
+                      <ListItem
+                        title="Team"
+                        href="/team"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Meet our leadership team
+                      </ListItem>
+                      <ListItem
+                        title="FAQ"
+                        href="/faq"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Frequently asked questions
+                      </ListItem>
+                      <ListItem
+                        title="Contact"
+                        href="/contact"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Get in touch with us
+                      </ListItem>
+                      <ListItem
+                        title="Careers"
+                        href="/careers"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Join our growing team
+                      </ListItem>
+                      <ListItem
+                        title="Legal"
+                        href="/legal"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Terms, privacy, and policies
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            
+            <div className="hidden md:flex">
+              <NavLinks />
+            </div>
+            
+            <div className="flex items-center ml-auto space-x-2">
+              {isAuthenticated ? (
+                <>
+                  <NotificationCenter />
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src="/placeholder.svg" alt="User" />
+                          <AvatarFallback>JD</AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="cursor-pointer">
+                          <User className="mr-2 h-4 w-4" />
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/dashboard" className="cursor-pointer">
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/portfolio" className="cursor-pointer">
+                          My Portfolio
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/login">Sign In</Link>
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link to="/signup">Sign Up</Link>
+                  </Button>
+                </>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </header>
   );
-}
+};
+
+export default Navbar;
+
+const ListItem = React.forwardRef<
+  React.ElementRef<typeof Link>,
+  React.ComponentPropsWithoutRef<typeof Link>
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+
+ListItem.displayName = "ListItem";

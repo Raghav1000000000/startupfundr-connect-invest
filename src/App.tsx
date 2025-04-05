@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react";
 import Index from "./pages/Index";
 import Startups from "./pages/Startups";
 import StartupDetail from "./pages/StartupDetail";
@@ -16,7 +17,6 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import HowItWorks from "./pages/HowItWorks";
 import StartupResources from "./pages/StartupResources";
-import React from "react";
 import RaiseCapital from "./pages/RaiseCapital";
 import StartupApplication from "./pages/StartupApplication";
 import SuccessStories from "./pages/SuccessStories";
@@ -32,11 +32,27 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
+// Configure React Query client with defaults for better UX
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
+      refetchOnWindowFocus: false,
+      onSettled: (data, error) => {
+        if (error) {
+          // Global error handling for queries
+          console.error("Query error:", error);
+        }
+      },
+    },
+    mutations: {
+      // Global error handling for mutations
+      onSettled: (data, error) => {
+        if (error) {
+          console.error("Mutation error:", error);
+        }
+      },
     },
   },
 });
@@ -46,23 +62,27 @@ const App = () => {
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
+          {/* Toast notifications - both shadcn and sonner available */}
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <Routes>
+              {/* Main public pages */}
               <Route path="/" element={<Index />} />
               <Route path="/startups" element={<Startups />} />
               <Route path="/startups/:id" element={<StartupDetail />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
-              <Route path="/startup-resources" element={<StartupResources />} />
+              
+              {/* User authenticated pages */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/portfolio" element={<Portfolio />} />
               
               {/* Startup section pages */}
+              <Route path="/startup-resources" element={<StartupResources />} />
               <Route path="/raise-capital" element={<RaiseCapital />} />
               <Route path="/startup-application" element={<StartupApplication />} />
               <Route path="/success-stories" element={<SuccessStories />} />
@@ -84,7 +104,7 @@ const App = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Catch-all route for 404 - MUST BE LAST */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
