@@ -3,8 +3,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useSuccessStories } from "@/hooks/use-success-stories";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SuccessStories() {
+  const { data: successStories, isLoading, error } = useSuccessStories();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -23,146 +27,95 @@ export default function SuccessStories() {
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
-              {/* Success Story 1 */}
-              <div className="mb-16 border-b pb-16">
-                <div className="flex flex-col md:flex-row gap-8">
-                  <div className="md:w-2/5">
-                    <div className="bg-gray-200 rounded-lg overflow-hidden h-64">
-                      <img 
-                        src="https://images.unsplash.com/photo-1606857521015-7f9fcf423740" 
-                        alt="EcoTech Solutions Team" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="md:w-3/5">
-                    <div className="flex items-center mb-4">
-                      <span className="bg-success-100 text-success-700 text-sm font-medium px-3 py-1 rounded-full">Success Story</span>
-                      <span className="ml-3 text-gray-500 text-sm">CleanTech</span>
-                    </div>
-                    <h2 className="text-2xl font-bold mb-4">EcoTech Solutions: $2.5M Raised for Sustainable Energy Storage</h2>
-                    <p className="text-gray-600 mb-6">
-                      EcoTech Solutions developed an innovative battery technology that improves energy storage efficiency by 40%. 
-                      Through StartupFundr, they connected with investors passionate about clean energy and raised $2.5M to scale production.
-                    </p>
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Founded:</span>
-                        <span>2020</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Raised:</span>
-                        <span>$2,500,000</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Investors:</span>
-                        <span>87</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Campaign Length:</span>
-                        <span>45 days</span>
+              {isLoading && (
+                <>
+                  {[1, 2, 3].map((item) => (
+                    <div key={item} className="mb-16 border-b pb-16">
+                      <div className="flex flex-col md:flex-row gap-8">
+                        <div className="md:w-2/5">
+                          <Skeleton className="h-64 w-full rounded-lg" />
+                        </div>
+                        <div className="md:w-3/5">
+                          <Skeleton className="h-4 w-32 mb-4" />
+                          <Skeleton className="h-8 w-full mb-4" />
+                          <Skeleton className="h-20 w-full mb-6" />
+                          <div className="space-y-3 mb-6">
+                            {[1, 2, 3, 4].map((i) => (
+                              <div key={i} className="flex items-center">
+                                <Skeleton className="h-4 w-32" />
+                                <Skeleton className="h-4 w-24 ml-4" />
+                              </div>
+                            ))}
+                          </div>
+                          <Skeleton className="h-10 w-32" />
+                        </div>
                       </div>
                     </div>
-                    <Button variant="outline" className="text-fundr-600 border-fundr-600 hover:bg-fundr-50">
-                      Read Full Story
-                    </Button>
-                  </div>
+                  ))}
+                </>
+              )}
+              
+              {error && (
+                <div className="text-center py-10">
+                  <p className="text-red-500">Failed to load success stories. Please try again later.</p>
+                  <Button onClick={() => window.location.reload()} className="mt-4">
+                    Retry
+                  </Button>
                 </div>
-              </div>
+              )}
 
-              {/* Success Story 2 */}
-              <div className="mb-16 border-b pb-16">
-                <div className="flex flex-col md:flex-row gap-8">
-                  <div className="md:w-2/5">
-                    <div className="bg-gray-200 rounded-lg overflow-hidden h-64">
-                      <img 
-                        src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf" 
-                        alt="MediSync Team" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="md:w-3/5">
-                    <div className="flex items-center mb-4">
-                      <span className="bg-success-100 text-success-700 text-sm font-medium px-3 py-1 rounded-full">Success Story</span>
-                      <span className="ml-3 text-gray-500 text-sm">HealthTech</span>
-                    </div>
-                    <h2 className="text-2xl font-bold mb-4">MediSync: $1.8M to Revolutionize Patient Care Coordination</h2>
-                    <p className="text-gray-600 mb-6">
-                      MediSync created a platform that streamlines communication between healthcare providers for better patient outcomes. 
-                      They raised $1.8M on StartupFundr to expand their team and accelerate hospital adoption nationwide.
-                    </p>
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Founded:</span>
-                        <span>2021</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Raised:</span>
-                        <span>$1,800,000</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Investors:</span>
-                        <span>64</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Campaign Length:</span>
-                        <span>60 days</span>
+              {!isLoading && !error && successStories?.map((story, index) => (
+                <div key={story.id} className={`mb-16 ${index < successStories.length - 1 ? 'border-b pb-16' : ''}`}>
+                  <div className="flex flex-col md:flex-row gap-8">
+                    <div className="md:w-2/5">
+                      <div className="bg-gray-200 rounded-lg overflow-hidden h-64">
+                        <img 
+                          src={story.imageUrl} 
+                          alt={story.title} 
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
-                    <Button variant="outline" className="text-fundr-600 border-fundr-600 hover:bg-fundr-50">
-                      Read Full Story
-                    </Button>
+                    <div className="md:w-3/5">
+                      <div className="flex items-center mb-4">
+                        <span className="bg-success-100 text-success-700 text-sm font-medium px-3 py-1 rounded-full">Success Story</span>
+                        <span className="ml-3 text-gray-500 text-sm">{story.industry}</span>
+                      </div>
+                      <h2 className="text-2xl font-bold mb-4">{story.title}</h2>
+                      <p className="text-gray-600 mb-6">
+                        {story.summary}
+                      </p>
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center">
+                          <span className="font-medium w-32">Founded:</span>
+                          <span>{story.foundedYear}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-medium w-32">Raised:</span>
+                          <span>${story.raisedAmount.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-medium w-32">Investors:</span>
+                          <span>{story.investors}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-medium w-32">Campaign Length:</span>
+                          <span>{story.campaignLength} days</span>
+                        </div>
+                      </div>
+                      <Button variant="outline" className="text-fundr-600 border-fundr-600 hover:bg-fundr-50">
+                        Read Full Story
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Success Story 3 */}
-              <div className="mb-16">
-                <div className="flex flex-col md:flex-row gap-8">
-                  <div className="md:w-2/5">
-                    <div className="bg-gray-200 rounded-lg overflow-hidden h-64">
-                      <img 
-                        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" 
-                        alt="EduLearn Team" 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="md:w-3/5">
-                    <div className="flex items-center mb-4">
-                      <span className="bg-success-100 text-success-700 text-sm font-medium px-3 py-1 rounded-full">Success Story</span>
-                      <span className="ml-3 text-gray-500 text-sm">EdTech</span>
-                    </div>
-                    <h2 className="text-2xl font-bold mb-4">EduLearn: $3.2M for AI-Powered Learning Platform</h2>
-                    <p className="text-gray-600 mb-6">
-                      EduLearn developed an AI-powered platform that personalizes education for K-12 students. Their successful 
-                      StartupFundr campaign raised $3.2M to enhance their technology and expand to international markets.
-                    </p>
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Founded:</span>
-                        <span>2019</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Raised:</span>
-                        <span>$3,200,000</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Investors:</span>
-                        <span>112</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-medium w-32">Campaign Length:</span>
-                        <span>30 days</span>
-                      </div>
-                    </div>
-                    <Button variant="outline" className="text-fundr-600 border-fundr-600 hover:bg-fundr-50">
-                      Read Full Story
-                    </Button>
-                  </div>
+              ))}
+              
+              {!isLoading && !error && successStories?.length === 0 && (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No success stories found.</p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>

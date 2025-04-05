@@ -72,3 +72,16 @@ export interface AdminUser {
   email: string;
   role: 'admin' | 'moderator';
 }
+
+// New Success Story type
+export interface SuccessStory {
+  id: string;
+  title: string;
+  summary: string;
+  imageUrl: string;
+  industry: string;
+  foundedYear: number;
+  raisedAmount: number;
+  investors: number;
+  campaignLength: number;
+}
