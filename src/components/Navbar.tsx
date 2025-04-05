@@ -25,6 +25,7 @@ import { useMobile } from "@/hooks/use-mobile";
 import NavLinks from "@/components/NavLinks";
 import NotificationCenter from "@/components/NotificationCenter";
 import { toast } from "@/components/ui/use-toast";
+import * as React from "react";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -149,28 +150,28 @@ const Navbar = () => {
                       </li>
                       <ListItem
                         title="Portfolio"
-                        href="/portfolio"
+                        to="/portfolio"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Track your investments and monitor performance
                       </ListItem>
                       <ListItem
                         title="How It Works"
-                        href="/how-it-works"
+                        to="/how-it-works"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Learn about our investment process
                       </ListItem>
                       <ListItem
                         title="Investment Guide"
-                        href="/investment-guide"
+                        to="/investment-guide"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Resources for making informed decisions
                       </ListItem>
                       <ListItem
                         title="Success Stories"
-                        href="/success-stories"
+                        to="/success-stories"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         See startups that successfully raised funding
@@ -200,28 +201,28 @@ const Navbar = () => {
                       </li>
                       <ListItem
                         title="Apply Now"
-                        href="/startup-application"
+                        to="/startup-application"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Submit your startup for consideration
                       </ListItem>
                       <ListItem
                         title="Startup Resources"
-                        href="/startup-resources"
+                        to="/startup-resources"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Helpful tools and guides for founders
                       </ListItem>
                       <ListItem
                         title="Pitch Tips"
-                        href="/startup-resources#pitch-tips"
+                        to="/startup-resources#pitch-tips"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         How to create a compelling startup pitch
                       </ListItem>
                       <ListItem
                         title="Investor Network"
-                        href="/investor-network"
+                        to="/investor-network"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Learn about our investor community
@@ -235,42 +236,42 @@ const Navbar = () => {
                     <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] grid-cols-2">
                       <ListItem
                         title="About Us"
-                        href="/about"
+                        to="/about"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Our mission and vision
                       </ListItem>
                       <ListItem
                         title="Team"
-                        href="/team"
+                        to="/team"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Meet our leadership team
                       </ListItem>
                       <ListItem
                         title="FAQ"
-                        href="/faq"
+                        to="/faq"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Frequently asked questions
                       </ListItem>
                       <ListItem
                         title="Contact"
-                        href="/contact"
+                        to="/contact"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Get in touch with us
                       </ListItem>
                       <ListItem
                         title="Careers"
-                        href="/careers"
+                        to="/careers"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Join our growing team
                       </ListItem>
                       <ListItem
                         title="Legal"
-                        href="/legal"
+                        to="/legal"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         Terms, privacy, and policies
@@ -352,19 +353,27 @@ const Navbar = () => {
 
 export default Navbar;
 
+interface ListItemProps extends React.ComponentPropsWithoutRef<typeof Link> {
+  title: string;
+  to: string;
+  onClick: () => void;
+}
+
 const ListItem = React.forwardRef<
   React.ElementRef<typeof Link>,
-  React.ComponentPropsWithoutRef<typeof Link>
->(({ className, title, children, ...props }, ref) => {
+  ListItemProps
+>(({ className, title, children, to, onClick, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
         <Link
           ref={ref}
+          to={to}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
             className
           )}
+          onClick={onClick}
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>

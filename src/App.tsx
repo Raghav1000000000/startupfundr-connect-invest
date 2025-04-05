@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -39,19 +38,15 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
       refetchOnWindowFocus: false,
-      onSettled: (data, error) => {
-        if (error) {
-          // Global error handling for queries
-          console.error("Query error:", error);
-        }
+      onError: (error) => {
+        // Global error handling for queries
+        console.error("Query error:", error);
       },
     },
     mutations: {
       // Global error handling for mutations
-      onSettled: (data, error) => {
-        if (error) {
-          console.error("Mutation error:", error);
-        }
+      onError: (error) => {
+        console.error("Mutation error:", error);
       },
     },
   },
