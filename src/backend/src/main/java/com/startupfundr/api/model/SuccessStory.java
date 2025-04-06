@@ -1,4 +1,3 @@
-
 package com.startupfundr.api.model;
 
 import lombok.AllArgsConstructor;
