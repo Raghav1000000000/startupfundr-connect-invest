@@ -19,5 +19,7 @@ public class User {
     private String email;
     private String password;
     private Double walletBalance;
+    private String phone;
+    private String profilePicUrl;
     private List<Investment> investments;
 }
