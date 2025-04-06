@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/startups")
+@RequestMapping("/api/startups")
 public class StartupController {
     private final StartupService startupService;
 

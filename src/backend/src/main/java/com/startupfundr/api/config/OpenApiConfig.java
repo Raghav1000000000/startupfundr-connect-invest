@@ -1,18 +1,20 @@
-// package com.startupfundr.api.config;
 
-// import io.swagger.v3.oas.models.*;
-// import io.swagger.v3.oas.models.info.Info;
-// import org.springframework.context.annotation.*;
+package com.startupfundr.api.config;
 
-// @Configuration
-// public class OpenApiConfig {
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-//     @Bean
-//     public OpenAPI customOpenAPI() {
-//         return new OpenAPI()
-//             .info(new Info()
-//                 .title("StartupFundr API")
-//                 .version("1.0")
-//                 .description("API documentation for the StartupFundr platform."));
-//     }
-// }
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("StartupFundr API")
+                .version("1.0")
+                .description("API documentation for the StartupFundr platform."));
+    }
+}

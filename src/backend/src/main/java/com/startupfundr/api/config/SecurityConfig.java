@@ -1,3 +1,4 @@
+
 package com.startupfundr.api.config;
 
 import com.startupfundr.api.filter.JwtFilter;
@@ -24,8 +25,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for JWT usage
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Allow unauth routes
-                .anyRequest().authenticated()                // Protect other endpoints
+                .requestMatchers("/auth/**").permitAll()            // Allow auth endpoints
+                .requestMatchers("/v3/api-docs/**").permitAll()     // OpenAPI docs
+                .requestMatchers("/swagger-ui/**").permitAll()      // Swagger UI
+                .requestMatchers("/swagger-resources/**").permitAll() // Swagger resources
+                .anyRequest().authenticated()                       // Protect other endpoints
             )
             .sessionManagement(sess -> sess
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No session
