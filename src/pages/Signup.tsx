@@ -11,12 +11,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+  phone: z.string().optional(),
   userType: z.enum(["investor", "startup"], {
     required_error: "Please select an account type",
   }),
@@ -28,6 +30,7 @@ const formSchema = z.object({
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signup } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,27 +39,39 @@ export default function Signup() {
       email: "",
       password: "",
       confirmPassword: "",
+      phone: "",
       userType: "investor",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // Mock signup - In a real app, this would be a call to your auth provider
-    setTimeout(() => {
-      // Simulate successful registration
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userType", values.userType);
+    try {
+      await signup(
+        values.name, 
+        values.email, 
+        values.password, 
+        values.userType,
+        values.phone
+      );
       
       toast({
         title: "Registration Successful",
         description: "Welcome to StartupFundr!",
       });
       
-      setIsLoading(false);
       navigate("/dashboard");
-    }, 1000);
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        title: "Registration Failed",
+        description: "There was an error creating your account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -93,6 +108,20 @@ export default function Signup() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="yourname@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="+1 (555) 123-4567" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

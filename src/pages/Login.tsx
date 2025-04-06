@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -19,6 +20,7 @@ const formSchema = z.object({
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -28,23 +30,28 @@ export default function Login() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // Mock authentication - In a real app, this would be a call to your auth provider
-    setTimeout(() => {
-      // Simulate successful login
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userType", "investor");
+    try {
+      await login(values.email, values.password);
       
       toast({
         title: "Login Successful",
         description: "Welcome back to StartupFundr!",
       });
       
-      setIsLoading(false);
       navigate("/dashboard");
-    }, 1000);
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Login Failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (

@@ -1,12 +1,6 @@
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
 import { 
   Card, 
   CardContent, 
@@ -16,503 +10,441 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from "recharts";
-import { ArrowRight, Plus, TrendingUp, Users, DollarSign, Activity } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast } from "@/components/ui/use-toast";
+import { useInvestments } from "@/hooks/useInvestments";
+import { useStartups } from "@/hooks/useStartups";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BadgeDollarSign, TrendingUp, Building, CreditCard } from "lucide-react";
 
-const Dashboard = () => {
-  // In a real app, this would come from authentication context
+export default function Dashboard() {
+  const { user } = useAuth();
+  const { getUserInvestments } = useInvestments();
+  const { getFeaturedStartups } = useStartups();
   const [userType, setUserType] = useState<"investor" | "startup">("investor");
-  const [isLoading, setIsLoading] = useState(true);
   
-  // Mock data for demonstration
-  const portfolioData = [
-    { name: "TechVision AI", value: 4000, color: "#3182ce" },
-    { name: "GreenEnergy Solutions", value: 3000, color: "#48bb78" },
-    { name: "HealthCare Plus", value: 2000, color: "#e53e3e" },
-    { name: "FinTech Innovations", value: 2780, color: "#805ad5" },
-  ];
+  const { 
+    data: investments, 
+    isLoading: investmentsLoading 
+  } = getUserInvestments;
   
-  const investmentData = [
-    { name: "Jan", amount: 4000 },
-    { name: "Feb", amount: 3000 },
-    { name: "Mar", amount: 5000 },
-    { name: "Apr", amount: 4500 },
-    { name: "May", amount: 6000 },
-    { name: "Jun", amount: 5500 },
-  ];
-  
-  const startupPerformanceData = [
-    { name: "Q1", revenue: 4000, users: 2400 },
-    { name: "Q2", revenue: 5000, users: 2800 },
-    { name: "Q3", revenue: 8000, users: 3600 },
-    { name: "Q4", revenue: 10000, users: 4200 },
-  ];
-  
-  const recentInvestments = [
-    { id: "1", startupName: "TechVision AI", amount: 5000, date: "2025-03-28", status: "completed" },
-    { id: "2", startupName: "GreenEnergy Solutions", amount: 3000, date: "2025-03-15", status: "completed" },
-    { id: "3", startupName: "HealthCare Plus", amount: 2500, date: "2025-04-02", status: "pending" },
-  ];
-  
-  const recentNotifications = [
-    { id: "1", title: "TechVision AI posted an update", time: "2 hours ago", isRead: false },
-    { id: "2", title: "New investment opportunity available", time: "5 hours ago", isRead: true },
-    { id: "3", title: "Your investment in GreenEnergy was confirmed", time: "1 day ago", isRead: true },
-    { id: "4", title: "HealthCare Plus reached their funding goal", time: "3 days ago", isRead: true },
-  ];
-  
-  const startupMetrics = {
-    totalFunding: 120000,
-    investors: 48,
-    runwayMonths: 18,
-    growthRate: 27
-  };
-  
-  const upcomingTasks = [
-    { id: "1", title: "Update business plan", dueDate: "2025-04-10", status: "pending" },
-    { id: "2", title: "Investor pitch presentation", dueDate: "2025-04-15", status: "in-progress" },
-    { id: "3", title: "Review Q2 financials", dueDate: "2025-04-20", status: "pending" },
-  ];
+  const { 
+    data: recommendedStartups, 
+    isLoading: startupsLoading 
+  } = getFeaturedStartups;
 
   useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // Allow users to switch between investor and startup view for demo purposes
-  // In a real app, this would be determined by user role
-  const toggleUserType = () => {
-    const newType = userType === "investor" ? "startup" : "investor";
-    setUserType(newType);
-    toast({
-      title: "View Changed",
-      description: `Switched to ${newType} dashboard view`,
-    });
-  };
+    // In a real app, we would determine user type from the user object
+    const storedUserType = localStorage.getItem("userType");
+    if (storedUserType === "startup" || storedUserType === "investor") {
+      setUserType(storedUserType);
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow py-8 px-4 md:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto space-y-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome back! Here's an overview of your {userType === "investor" ? "investment portfolio" : "startup metrics"}.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={toggleUserType}>
-                Switch to {userType === "investor" ? "Startup" : "Investor"} View
-              </Button>
-              <Button asChild>
-                <Link to={userType === "investor" ? "/startups" : "/raise-capital"}>
-                  {userType === "investor" ? "Explore Startups" : "Manage Fundraising"}
-                </Link>
-              </Button>
-            </div>
-          </div>
-          
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="investments">
-                {userType === "investor" ? "Investments" : "Funding"}
-              </TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="tasks">Tasks</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="space-y-4">
-              {/* Top cards with key metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {userType === "investor" ? (
-                  <>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Total Invested
-                        </CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">$15,500</div>
-                        <p className="text-xs text-muted-foreground">
-                          +12.3% from last month
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Startups Funded
-                        </CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">7</div>
-                        <p className="text-xs text-muted-foreground">
-                          +2 new this quarter
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          ROI
-                        </CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">18.2%</div>
-                        <p className="text-xs text-muted-foreground">
-                          +5.1% from previous year
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Available Balance
-                        </CardTitle>
-                        <Activity className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">$24,500</div>
-                        <p className="text-xs text-muted-foreground">
-                          Ready to invest
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            Welcome{user?.name ? `, ${user.name}` : ''}!
+          </h1>
+          <p className="text-muted-foreground">
+            {userType === "investor" 
+              ? "Manage your investments and discover new opportunities." 
+              : "Track your fundraising progress and manage your startup profile."}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Stats Cards */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                {userType === "investor" ? "Total Invested" : "Total Raised"}
+              </CardTitle>
+              <BadgeDollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {investmentsLoading ? (
+                  <Skeleton className="h-8 w-24" />
                 ) : (
-                  <>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Total Funding
-                        </CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">${startupMetrics.totalFunding.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">
-                          80% of goal reached
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Investors
-                        </CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{startupMetrics.investors}</div>
-                        <p className="text-xs text-muted-foreground">
-                          +5 new this month
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Growth Rate
-                        </CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{startupMetrics.growthRate}%</div>
-                        <p className="text-xs text-muted-foreground">
-                          +3.4% from previous quarter
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">
-                          Runway
-                        </CardTitle>
-                        <Activity className="h-4 w-4 text-muted-foreground" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{startupMetrics.runwayMonths} months</div>
-                        <p className="text-xs text-muted-foreground">
-                          Based on current burn rate
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </>
+                  `$${investments?.reduce((sum, inv) => sum + inv.amount, 0)?.toLocaleString() || "0"}`
                 )}
               </div>
-              
-              {/* Charts section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <CardTitle>
-                      {userType === "investor" ? "Portfolio Distribution" : "Funding Distribution"}
-                    </CardTitle>
-                    <CardDescription>
-                      {userType === "investor" 
-                        ? "Investment allocation across startups" 
-                        : "Funding sources breakdown"
-                      }
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={portfolioData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={60}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          >
-                            {portfolioData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="col-span-1">
-                  <CardHeader>
-                    <CardTitle>
-                      {userType === "investor" ? "Investment History" : "Growth Metrics"}
-                    </CardTitle>
-                    <CardDescription>
-                      {userType === "investor" 
-                        ? "Your investment activity over time" 
-                        : "Revenue and user growth by quarter"
-                      }
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          data={userType === "investor" ? investmentData : startupPerformanceData}
-                          margin={{
-                            top: 5,
-                            right: 30,
-                            left: 20,
-                            bottom: 5,
-                          }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          {userType === "investor" ? (
-                            <Bar dataKey="amount" fill="#3182ce" />
-                          ) : (
-                            <>
-                              <Bar dataKey="revenue" fill="#3182ce" />
-                              <Bar dataKey="users" fill="#48bb78" />
-                            </>
-                          )}
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
+              <p className="text-xs text-muted-foreground">
+                {userType === "investor" ? "+12% from last month" : "+5% from last week"}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                {userType === "investor" ? "Portfolio Performance" : "Fundraising Goal"}
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {userType === "investor" ? "+14.2%" : "65%"}
               </div>
-              
-              {/* Recent activity and notifications */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                    <CardDescription>
-                      {userType === "investor" 
-                        ? "Your latest investments and activities" 
-                        : "Recent fundraising activities"
-                      }
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {recentInvestments.map(investment => (
-                        <div key={investment.id} className="flex items-center justify-between border-b pb-4">
-                          <div className="flex flex-col">
-                            <span className="font-medium">{investment.startupName}</span>
-                            <span className="text-sm text-muted-foreground">
-                              {new Date(investment.date).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span className="font-medium">${investment.amount}</span>
-                            <Badge variant={investment.status === "completed" ? "outline" : "secondary"}>
-                              {investment.status}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="outline" className="w-full" asChild>
-                      <Link to={userType === "investor" ? "/portfolio" : "/raise-capital"}>
-                        View All <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Notifications</CardTitle>
-                    <CardDescription>
-                      Your latest updates and alerts
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {recentNotifications.map(notification => (
-                        <div key={notification.id} className="flex items-center justify-between border-b pb-4">
-                          <div className="flex flex-col">
-                            <div className="flex items-center">
-                              <span className="font-medium">{notification.title}</span>
-                              {!notification.isRead && (
-                                <span className="ml-2 h-2 w-2 rounded-full bg-blue-600"></span>
-                              )}
-                            </div>
-                            <span className="text-sm text-muted-foreground">
-                              {notification.time}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button variant="outline" className="w-full">
-                      View All Notifications <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardFooter>
-                </Card>
+              <p className="text-xs text-muted-foreground">
+                {userType === "investor" ? "YTD return" : "Of $100,000 goal"}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                {userType === "investor" ? "Active Investments" : "Total Investors"}
+              </CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {investmentsLoading ? (
+                  <Skeleton className="h-8 w-12" />
+                ) : (
+                  investments?.length || "0"
+                )}
               </div>
-            </TabsContent>
-            
-            <TabsContent value="investments" className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                {userType === "investor" ? "Across multiple startups" : "Supporting your startup"}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${user?.walletBalance?.toLocaleString() || "0"}</div>
+              <p className="text-xs text-muted-foreground">
+                Available for investments
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="overview" className="mb-8">
+          <TabsList className="mb-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            {userType === "investor" ? (
+              <TabsTrigger value="investments">My Investments</TabsTrigger>
+            ) : (
+              <TabsTrigger value="fundraising">Fundraising</TabsTrigger>
+            )}
+            <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview">
+            <div className="grid grid-cols-1 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {userType === "investor" ? "Your Investment Portfolio" : "Funding Progress"}
+                    {userType === "investor" ? "Recommended Opportunities" : "Fundraising Progress"}
                   </CardTitle>
                   <CardDescription>
-                    {userType === "investor"
-                      ? "Track and manage your investments"
-                      : "Track your fundraising progress"
-                    }
+                    {userType === "investor" 
+                      ? "Startups that match your investment preferences" 
+                      : "Track your campaign performance over time"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {/* This would be replaced with a full table or list component */}
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground mb-4">
-                      Detailed investment information would be displayed here
-                    </p>
-                    <Button asChild>
-                      <Link to={userType === "investor" ? "/portfolio" : "/raise-capital"}>
-                        Go to {userType === "investor" ? "Portfolio" : "Fundraising"} Page
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="analytics" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Analytics Dashboard</CardTitle>
-                  <CardDescription>
-                    Detailed metrics and performance analytics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground mb-4">
-                      Comprehensive analytics and reporting would be displayed here
-                    </p>
-                    <Button>
-                      Generate Report
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="tasks" className="space-y-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>Tasks & To-Dos</CardTitle>
-                    <CardDescription>
-                      Manage your pending tasks
-                    </CardDescription>
-                  </div>
-                  <Button size="sm" variant="outline">
-                    <Plus className="h-4 w-4 mr-1" /> Add Task
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {upcomingTasks.map(task => (
-                      <div key={task.id} className="flex items-center justify-between border-b pb-4">
-                        <div className="flex flex-col">
-                          <span className="font-medium">{task.title}</span>
-                          <span className="text-sm text-muted-foreground">
-                            Due: {new Date(task.dueDate).toLocaleDateString()}
-                          </span>
+                  {userType === "investor" ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {startupsLoading ? (
+                        Array(3).fill(0).map((_, i) => (
+                          <Card key={i}>
+                            <CardHeader>
+                              <Skeleton className="h-6 w-24 mb-2" />
+                              <Skeleton className="h-4 w-full" />
+                            </CardHeader>
+                            <CardContent>
+                              <Skeleton className="h-16 w-full" />
+                            </CardContent>
+                            <CardFooter>
+                              <Skeleton className="h-9 w-full" />
+                            </CardFooter>
+                          </Card>
+                        ))
+                      ) : (
+                        recommendedStartups?.slice(0, 3).map((startup) => (
+                          <Card key={startup.id}>
+                            <CardHeader>
+                              <CardTitle className="text-md">{startup.name}</CardTitle>
+                              <CardDescription>{startup.tagline}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="text-sm text-muted-foreground mb-2">
+                                <div className="flex justify-between mb-1">
+                                  <span>Raised: ${startup.raisedAmount?.toLocaleString()}</span>
+                                  <span>{startup.equity}% equity</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                  <div 
+                                    className="bg-fundr-600 h-2 rounded-full" 
+                                    style={{ 
+                                      width: `${(startup.raisedAmount / startup.askAmount) * 100}%` 
+                                    }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </CardContent>
+                            <CardFooter>
+                              <Link to={`/startups/${startup.id}`} className="w-full">
+                                <Button size="sm" className="w-full">View Opportunity</Button>
+                              </Link>
+                            </CardFooter>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="mb-4">
+                        <div className="flex justify-between mb-2">
+                          <span className="font-medium">Fundraising Goal: $100,000</span>
+                          <span className="font-medium">Raised: $65,000 (65%)</span>
                         </div>
-                        <Badge variant={task.status === "in-progress" ? "default" : "outline"}>
-                          {task.status}
-                        </Badge>
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                          <div 
+                            className="bg-fundr-600 h-3 rounded-full" 
+                            style={{ width: "65%" }}
+                          ></div>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                      
+                      <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 className="font-medium mb-2">Fundraising Stats</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Investors</p>
+                            <p className="font-medium">24</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Avg. Investment</p>
+                            <p className="font-medium">$2,708</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Campaign Views</p>
+                            <p className="font-medium">1,245</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Conversion Rate</p>
+                            <p className="font-medium">1.9%</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Link to="/startup-application">
+                        <Button>Update Campaign</Button>
+                      </Link>
+                    </div>
+                  )}
                 </CardContent>
+                <CardFooter>
+                  <Link to={userType === "investor" ? "/startups" : "/raise-capital"}>
+                    <Button variant="outline">
+                      {userType === "investor" ? "Browse All Startups" : "Fundraising Resources"}
+                    </Button>
+                  </Link>
+                </CardFooter>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="investments">
+            <Card>
+              <CardHeader>
+                <CardTitle>My Investment Portfolio</CardTitle>
+                <CardDescription>Track the performance of your investments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {investmentsLoading ? (
+                  Array(3).fill(0).map((_, i) => (
+                    <div key={i} className="flex items-center justify-between py-3 border-b">
+                      <div className="flex items-center">
+                        <Skeleton className="h-10 w-10 rounded-full mr-4" />
+                        <div>
+                          <Skeleton className="h-5 w-32 mb-1" />
+                          <Skeleton className="h-4 w-24" />
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <Skeleton className="h-5 w-20 mb-1" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    </div>
+                  ))
+                ) : investments?.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground mb-4">You haven't made any investments yet.</p>
+                    <Link to="/startups">
+                      <Button>Explore Startups</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  investments?.map((investment) => (
+                    <div key={investment.id} className="flex items-center justify-between py-3 border-b">
+                      <div className="flex items-center">
+                        <div className="h-10 w-10 bg-gray-200 rounded-full mr-4" />
+                        <div>
+                          <p className="font-medium">Startup Name</p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(investment.date).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium">${investment.amount.toLocaleString()}</p>
+                        <p className="text-sm text-muted-foreground">{investment.equity}% equity</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </CardContent>
+              {investments?.length > 0 && (
+                <CardFooter>
+                  <Link to="/portfolio">
+                    <Button variant="outline">View Detailed Portfolio</Button>
+                  </Link>
+                </CardFooter>
+              )}
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="fundraising">
+            <Card>
+              <CardHeader>
+                <CardTitle>Fundraising Campaign</CardTitle>
+                <CardDescription>Manage your startup's fundraising efforts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-medium mb-2">Campaign Performance</h4>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm">Goal: $100,000</span>
+                      <span className="text-sm">65% complete</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                      <div className="bg-fundr-600 h-2.5 rounded-full" style={{ width: "65%" }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Recent Investors</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center py-2 border-b">
+                        <div className="flex items-center">
+                          <div className="h-8 w-8 rounded-full bg-gray-200 mr-3"></div>
+                          <span>John D.</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">$5,000</p>
+                          <p className="text-xs text-muted-foreground">2 days ago</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b">
+                        <div className="flex items-center">
+                          <div className="h-8 w-8 rounded-full bg-gray-200 mr-3"></div>
+                          <span>Sarah M.</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">$10,000</p>
+                          <p className="text-xs text-muted-foreground">5 days ago</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b">
+                        <div className="flex items-center">
+                          <div className="h-8 w-8 rounded-full bg-gray-200 mr-3"></div>
+                          <span>Robert K.</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">$7,500</p>
+                          <p className="text-xs text-muted-foreground">1 week ago</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-4">
+                    <Link to="/startup-application">
+                      <Button>Edit Campaign</Button>
+                    </Link>
+                    <Button variant="outline">Contact Investors</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="transactions">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Transactions</CardTitle>
+                <CardDescription>Your recent deposits, withdrawals, and investments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <div>
+                      <p className="font-medium">Deposit</p>
+                      <p className="text-sm text-muted-foreground">Apr 1, 2025</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-green-600">+$10,000.00</p>
+                      <p className="text-xs text-muted-foreground">Credit Card ****4242</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <div>
+                      <p className="font-medium">Investment - TechStart</p>
+                      <p className="text-sm text-muted-foreground">Mar 28, 2025</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-red-600">-$5,000.00</p>
+                      <p className="text-xs text-muted-foreground">Wallet Balance</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <div>
+                      <p className="font-medium">Deposit</p>
+                      <p className="text-sm text-muted-foreground">Mar 15, 2025</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-green-600">+$5,000.00</p>
+                      <p className="text-xs text-muted-foreground">Bank Transfer</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <div>
+                      <p className="font-medium">Investment - GreenEnergy</p>
+                      <p className="text-sm text-muted-foreground">Mar 10, 2025</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium text-red-600">-$2,500.00</p>
+                      <p className="text-xs text-muted-foreground">Wallet Balance</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full">View All Transactions</Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
       <Footer />
     </div>
   );
-};
-
-export default Dashboard;
+}

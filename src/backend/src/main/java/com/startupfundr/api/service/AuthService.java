@@ -1,3 +1,4 @@
+
 package com.startupfundr.api.service;
 
 import com.startupfundr.api.dto.UserDTO;
@@ -22,6 +23,9 @@ public class AuthService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private UserService userService;
 
     // Login logic: Validate user credentials and generate a JWT token
     public AuthResponse login(UserDTO userDTO) {
@@ -30,9 +34,16 @@ public class AuthService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
-                // Return the token in a structured response
+                // Generate token
                 String token = jwtUtil.generateToken(user.getEmail());
-                return new AuthResponse(token);
+                
+                // Convert user to DTO for response
+                UserDTO responseUserDTO = userService.convertToDTO(user);
+                
+                // Return token and user data
+                AuthResponse response = new AuthResponse(token);
+                response.setUser(responseUserDTO);
+                return response;
             } else {
                 // Return an error message in a structured response
                 return new AuthResponse("Invalid password");
@@ -57,11 +68,22 @@ public class AuthService {
         user.setPhone(userDTO.getPhone());
         user.setProfilePicUrl(userDTO.getProfilePicUrl());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword())); // hash password
+        user.setWalletBalance(0.0); // Initialize wallet
 
-        userRepository.save(user);
+        user = userRepository.save(user);
         
-        // Return the token in a structured response
+        // Convert saved user to DTO for response
+        UserDTO responseUserDTO = userService.convertToDTO(user);
+        
+        // Generate and return token with user data
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token);
+        AuthResponse response = new AuthResponse(token);
+        response.setUser(responseUserDTO);
+        return response;
+    }
+    
+    // Validate JWT token
+    public boolean validateToken(String token) {
+        return jwtUtil.validateToken(token);
     }
 }

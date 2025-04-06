@@ -16,12 +16,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.lang.NonNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
@@ -30,26 +35,57 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
+        // Skip filter for OPTIONS requests (CORS preflight)
+        if (request.getMethod().equals("OPTIONS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        // Skip auth for public endpoints
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/auth/") || 
+            path.contains("/swagger-ui") || 
+            path.contains("/api-docs") || 
+            path.contains("/startups") && request.getMethod().equals("GET")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        String token = null;
+        
+        // If no auth header is present, return 401
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{ \"error\": \"Authentication required\", \"status\": 401 }");
+            return;
+        }
+        
+        String token = authHeader.substring(7);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-
+        try {
+            // Validate token and set authentication
             if (jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractUsername(token);
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, null);
+                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                
+                // Continue with the filter chain
+                filterChain.doFilter(request, response);
             } else {
+                // Invalid token - send 401 response
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired JWT token");
-                return; // Stop further processing
+                response.setContentType("application/json");
+                response.getWriter().write("{ \"error\": \"Invalid or expired token\", \"status\": 401 }");
             }
+        } catch (Exception e) {
+            // Exception in token validation - send 401 response with error details
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{ \"error\": \"" + e.getMessage() + "\", \"status\": 401 }");
         }
-
-        filterChain.doFilter(request, response);
     }
 }
