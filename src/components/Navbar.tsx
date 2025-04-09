@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NavLinks from "./NavLinks";
@@ -11,6 +11,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -36,11 +37,15 @@ export default function Navbar() {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  const handleNavigation = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <nav className="bg-white border-b border-gray-100 py-4 shadow-sm">
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2" onClick={handleNavigation}>
           <div className="bg-fundr-600 text-white font-bold text-xl rounded w-10 h-10 flex items-center justify-center">
             SF
           </div>
@@ -91,17 +96,17 @@ export default function Navbar() {
             <div className="flex flex-col space-y-2 pt-4 border-t border-gray-100">
               {isAuthenticated ? (
                 <>
-                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/profile" onClick={handleNavigation}>
                     <Button variant="outline" className="w-full">My Profile</Button>
                   </Link>
                   <Button onClick={handleLogout} variant="ghost" className="w-full">Logout</Button>
                 </>
               ) : (
                 <>
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/login" onClick={handleNavigation}>
                     <Button variant="ghost" className="w-full">Sign In</Button>
                   </Link>
-                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/signup" onClick={handleNavigation}>
                     <Button className="w-full">Join Now</Button>
                   </Link>
                 </>
