@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Eye, EyeOff } from "lucide-react";
+import { passwordService } from "@/services/passwordService";
 
 const formSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -27,7 +28,31 @@ export default function ResetPassword() {
   const token = searchParams.get("token");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isValidToken, setIsValidToken] = useState(false);
+  const [isValidating, setIsValidating] = useState(true);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Validate token when component mounts
+    const validateToken = async () => {
+      if (!token) {
+        setIsValidating(false);
+        return;
+      }
+      
+      try {
+        const isValid = await passwordService.validateResetToken(token);
+        setIsValidToken(isValid);
+      } catch (error) {
+        console.error("Token validation failed:", error);
+        setIsValidToken(false);
+      } finally {
+        setIsValidating(false);
+      }
+    };
+    
+    validateToken();
+  }, [token]);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,28 +62,63 @@ export default function ResetPassword() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!token) return;
+    
     setIsLoading(true);
     
-    // In a real app, this would validate the token and update the password in the database
-    setTimeout(() => {
+    try {
+      const success = await passwordService.resetPassword(token, values.password);
+      
+      if (success) {
+        toast({
+          title: "Password Updated",
+          description: "Your password has been successfully updated.",
+        });
+        
+        setIsSubmitted(true);
+        
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      } else {
+        toast({
+          title: "Password Reset Failed",
+          description: "There was an error resetting your password. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Password reset failed:", error);
       toast({
-        title: "Password Updated",
-        description: "Your password has been successfully updated.",
+        title: "Password Reset Failed",
+        description: "There was an error resetting your password. Please try again.",
+        variant: "destructive",
       });
-      
+    } finally {
       setIsLoading(false);
-      setIsSubmitted(true);
-      
-      // Redirect to login page after a short delay
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
-    }, 1500);
+    }
   }
 
-  // If no token is provided, show error message
-  if (!token && !isSubmitted) {
+  // Show loading state while validating token
+  if (isValidating) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center py-12">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold mb-2">Validating Reset Link</h2>
+            <p className="text-muted-foreground">Please wait...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // If token is invalid or missing, show error message
+  if (!token || !isValidToken) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />

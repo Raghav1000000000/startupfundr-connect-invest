@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { passwordService } from "@/services/passwordService";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -26,19 +27,29 @@ export default function ForgotPassword() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // Mock password reset request - In a real app, this would be a call to your auth provider
-    setTimeout(() => {
+    try {
+      // Call password reset service
+      await passwordService.requestReset(values.email);
+      
       toast({
         title: "Reset Link Sent",
         description: "If an account exists with this email, you'll receive a password reset link",
       });
       
-      setIsLoading(false);
       setIsSubmitted(true);
-    }, 1000);
+    } catch (error) {
+      console.error("Password reset request failed:", error);
+      toast({
+        title: "Request Failed",
+        description: "There was a problem processing your request. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
