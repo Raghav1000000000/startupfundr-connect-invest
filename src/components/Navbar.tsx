@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -64,7 +63,7 @@ export default function Navbar() {
         <div className="lg:hidden bg-white border-t border-gray-100 py-4">
           <div className="container mx-auto px-4 space-y-4">
             <div className="space-y-3">
-              <NavLinks isMobile />
+              <NavLinks isMobile={true} />
             </div>
             <div className="flex flex-col space-y-2 pt-4 border-t border-gray-100">
               {isAuthenticated ? (
