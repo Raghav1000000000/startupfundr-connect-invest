@@ -1,13 +1,36 @@
+
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NavLinks from "./NavLinks";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logout Successful",
+        description: "You have been logged out successfully",
+      });
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout Failed",
+        description: "There was a problem logging you out",
+        variant: "destructive",
+      });
+    }
+    
+    setMobileMenuOpen(false);
+  };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -33,10 +56,10 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center space-x-3">
           {isAuthenticated ? (
             <>
-              <Link to="/dashboard">
-                <Button variant="outline">Dashboard</Button>
+              <Link to="/profile">
+                <Button variant="outline">My Profile</Button>
               </Link>
-              <Button onClick={logout} variant="ghost">Logout</Button>
+              <Button onClick={handleLogout} variant="ghost">Logout</Button>
             </>
           ) : (
             <>
@@ -68,13 +91,10 @@ export default function Navbar() {
             <div className="flex flex-col space-y-2 pt-4 border-t border-gray-100">
               {isAuthenticated ? (
                 <>
-                  <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="outline" className="w-full">Dashboard</Button>
+                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full">My Profile</Button>
                   </Link>
-                  <Button onClick={() => {
-                    logout();
-                    setMobileMenuOpen(false);
-                  }} variant="ghost" className="w-full">Logout</Button>
+                  <Button onClick={handleLogout} variant="ghost" className="w-full">Logout</Button>
                 </>
               ) : (
                 <>

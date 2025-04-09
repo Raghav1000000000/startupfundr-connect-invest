@@ -11,10 +11,11 @@ import { toast } from "@/components/ui/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
+import AuthLinks from "@/components/AuthLinks";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export default function Login() {
@@ -85,7 +86,12 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Password</FormLabel>
+                      <Link to="/forgot-password" className="text-sm text-fundr-600 hover:underline">
+                        Forgot password?
+                      </Link>
+                    </div>
                     <FormControl>
                       <Input type="password" placeholder="********" {...field} />
                     </FormControl>
@@ -94,23 +100,21 @@ export default function Login() {
                 )}
               />
               
-              <div className="flex justify-end">
-                <Link to="/forgot-password" className="text-sm text-fundr-600 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-              
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Signing In..." : "Sign In"}
               </Button>
               
               <div className="text-center mt-4">
                 <p className="text-sm text-muted-foreground">
                   Don't have an account?{" "}
                   <Link to="/signup" className="text-fundr-600 hover:underline">
-                    Sign up
+                    Create one now
                   </Link>
                 </p>
+                
+                <div className="mt-6">
+                  <AuthLinks />
+                </div>
               </div>
             </form>
           </Form>
