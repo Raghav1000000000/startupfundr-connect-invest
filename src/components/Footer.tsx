@@ -1,9 +1,10 @@
 
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white pt-12 pb-8">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-white pt-12 pb-8 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
@@ -110,7 +111,7 @@ export default function Footer() {
             <p className="text-gray-400 text-sm">
               &copy; {new Date().getFullYear()} StartupFundr. All rights reserved.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
+            <div className="flex items-center space-x-6 mt-4 md:mt-0">
               <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Privacy Policy
               </Link>
@@ -120,6 +121,7 @@ export default function Footer() {
               <Link to="/legal" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Legal
               </Link>
+              <ThemeToggle />
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import React from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 // Pages imports
 import Index from "./pages/Index";
@@ -70,56 +71,58 @@ const App = () => {
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            {/* Toast notifications - both shadcn and sonner available */}
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                {/* Main public pages */}
-                <Route path="/" element={<Index />} />
-                <Route path="/startups" element={<Startups />} />
-                <Route path="/startups/:id" element={<StartupDetail />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/how-it-works" element={<HowItWorks />} />
-                
-                {/* User authenticated pages */}
-                <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
-                <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-                <Route path="/portfolio" element={<ProtectedRoute element={<Portfolio />} />} />
-                
-                {/* Startup section pages */}
-                <Route path="/startup-resources" element={<StartupResources />} />
-                <Route path="/raise-capital" element={<RaiseCapital />} />
-                <Route path="/startup-application" element={<ProtectedRoute element={<StartupApplication />} />} />
-                <Route path="/success-stories" element={<SuccessStories />} />
-                <Route path="/investment-guide" element={<InvestmentGuide />} />
-                
-                {/* Company section pages */}
-                <Route path="/team" element={<Team />} />
-                <Route path="/careers" element={<Careers />} />
-                
-                {/* Legal pages */}
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/legal" element={<Legal />} />
-                <Route path="/cookie-policy" element={<CookiePolicy />} />
-                
-                {/* Authentication pages */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                
-                {/* Catch-all route for 404 - MUST BE LAST */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              {/* Toast notifications - both shadcn and sonner available */}
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  {/* Main public pages */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/startups" element={<Startups />} />
+                  <Route path="/startups/:id" element={<StartupDetail />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/how-it-works" element={<HowItWorks />} />
+                  
+                  {/* User authenticated pages */}
+                  <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+                  <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+                  <Route path="/portfolio" element={<ProtectedRoute element={<Portfolio />} />} />
+                  
+                  {/* Startup section pages */}
+                  <Route path="/startup-resources" element={<StartupResources />} />
+                  <Route path="/raise-capital" element={<RaiseCapital />} />
+                  <Route path="/startup-application" element={<ProtectedRoute element={<StartupApplication />} />} />
+                  <Route path="/success-stories" element={<SuccessStories />} />
+                  <Route path="/investment-guide" element={<InvestmentGuide />} />
+                  
+                  {/* Company section pages */}
+                  <Route path="/team" element={<Team />} />
+                  <Route path="/careers" element={<Careers />} />
+                  
+                  {/* Legal pages */}
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/legal" element={<Legal />} />
+                  <Route path="/cookie-policy" element={<CookiePolicy />} />
+                  
+                  {/* Authentication pages */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  
+                  {/* Catch-all route for 404 - MUST BE LAST */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </React.StrictMode>
   );
