@@ -7,9 +7,9 @@ interface StartupDescriptionProps {
 
 export default function StartupDescription({ startup }: StartupDescriptionProps) {
   return (
-    <div>
+    <div className="bg-white p-6 rounded-lg shadow-sm">
       <h2 className="text-xl font-bold mb-3">About {startup.name}</h2>
-      <p className="text-muted-foreground whitespace-pre-line">
+      <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
         {startup.description}
       </p>
     </div>
