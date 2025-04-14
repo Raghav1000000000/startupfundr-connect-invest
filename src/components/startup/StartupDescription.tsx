@@ -1,14 +1,17 @@
 
 import { Startup } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMobile } from "@/hooks/use-mobile";
 
 interface StartupDescriptionProps {
   startup: Startup;
 }
 
 export default function StartupDescription({ startup }: StartupDescriptionProps) {
+  const isMobile = useMobile();
+  
   return (
-    <Card>
+    <Card className={isMobile ? "mt-4" : ""}>
       <CardHeader className="pb-3">
         <CardTitle className="text-xl">About {startup.name}</CardTitle>
       </CardHeader>

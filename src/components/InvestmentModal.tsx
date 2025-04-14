@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
 import { Startup } from "@/types";
+import { useInvestments } from "@/hooks/useInvestments";
 
 interface InvestmentModalProps {
   open: boolean;
@@ -32,7 +33,9 @@ export default function InvestmentModal({
   const [activeTab, setActiveTab] = useState("amount");
   const [investmentAmount, setInvestmentAmount] = useState<number>(1000);
   const [agreementChecked, setAgreementChecked] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { invest } = useInvestments();
+  const isSubmitting = invest.isPending;
   
   const equity = ((investmentAmount / startup.askAmount) * startup.equity).toFixed(3);
   
@@ -53,7 +56,7 @@ export default function InvestmentModal({
     setActiveTab("agreement");
   };
   
-  const handleInvest = () => {
+  const handleInvest = async () => {
     if (!agreementChecked) {
       toast({
         title: "Agreement Required",
@@ -63,23 +66,24 @@ export default function InvestmentModal({
       return;
     }
     
-    setIsSubmitting(true);
-    
-    // Mock API call delay - in a real app, this would be a call to your backend
-    setTimeout(() => {
-      onInvestmentComplete(investmentAmount);
-      toast({
-        title: "Investment Successful",
-        description: `You have successfully invested $${investmentAmount.toLocaleString()} in ${startup.name}`,
+    try {
+      await invest.mutateAsync({
+        startupId: startup.id,
+        amount: investmentAmount,
+        equity: Number(equity)
       });
-      setIsSubmitting(false);
+      
+      onInvestmentComplete(investmentAmount);
       onOpenChange(false);
       
       // Reset state for next time
       setActiveTab("amount");
       setInvestmentAmount(1000);
       setAgreementChecked(false);
-    }, 1500);
+    } catch (error) {
+      console.error("Investment failed:", error);
+      // Error is already handled in the investmentService
+    }
   };
 
   return (

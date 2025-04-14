@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Bell, X, Check, Settings, ChevronRight } from "lucide-react";
 import {
   Sheet,
@@ -14,133 +14,75 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
-
-type NotificationType = "update" | "alert" | "message" | "system";
-
-interface Notification {
-  id: string;
-  title: string;
-  description: string;
-  timestamp: Date;
-  isRead: boolean;
-  type: NotificationType;
-  link?: string;
-  actionText?: string;
-}
-
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    title: "TechVision AI posted an update",
-    description: "We've reached our first milestone with the AI model development.",
-    timestamp: new Date("2025-04-03T14:30:00"),
-    isRead: false,
-    type: "update",
-    link: "/startups/techvision-ai",
-    actionText: "View Update"
-  },
-  {
-    id: "2",
-    title: "New investment opportunity",
-    description: "GreenEnergy Solutions is now accepting investments starting at $1,000.",
-    timestamp: new Date("2025-04-03T10:15:00"),
-    isRead: false,
-    type: "alert",
-    link: "/startups/greenenergy-solutions",
-    actionText: "Explore Opportunity"
-  },
-  {
-    id: "3",
-    title: "Message from HealthCare Plus founder",
-    description: "Thanks for your interest in our startup. I'd like to schedule a call to discuss further.",
-    timestamp: new Date("2025-04-02T16:45:00"),
-    isRead: true,
-    type: "message",
-    link: "/messages/healthcare-plus",
-    actionText: "Reply"
-  },
-  {
-    id: "4",
-    title: "Your investment was confirmed",
-    description: "Your $5,000 investment in FinTech Innovations has been processed successfully.",
-    timestamp: new Date("2025-04-01T09:20:00"),
-    isRead: true,
-    type: "system",
-    link: "/portfolio",
-    actionText: "View Portfolio"
-  },
-  {
-    id: "5",
-    title: "Profile verification required",
-    description: "Please complete your investor verification to unlock all platform features.",
-    timestamp: new Date("2025-03-31T11:05:00"),
-    isRead: true,
-    type: "alert",
-    link: "/profile",
-    actionText: "Verify Now"
-  },
-  {
-    id: "6",
-    title: "New platform feature available",
-    description: "Try our new startup comparison tool to make better investment decisions.",
-    timestamp: new Date("2025-03-30T15:30:00"),
-    isRead: true,
-    type: "system",
-    link: "/tools/comparison",
-    actionText: "Try Now"
-  }
-];
+import { Notification } from "@/types";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function NotificationCenter() {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
+  const { getUserNotifications, markAsRead, unreadCount } = useNotifications();
+  const { user } = useAuth();
   
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const notifications = getUserNotifications.data || [];
+  const isLoading = getUserNotifications.isLoading;
   
   const displayedNotifications = activeTab === "all" 
     ? notifications 
     : notifications.filter(n => !n.isRead);
     
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
-    );
-    
-    toast({
-      description: "Notification marked as read",
-    });
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await markAsRead.mutateAsync(id);
+      toast({
+        description: "Notification marked as read",
+      });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
   };
   
-  const handleMarkAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-    
-    toast({
-      description: "All notifications marked as read",
-    });
+  const handleMarkAllAsRead = async () => {
+    try {
+      // In a real implementation, we would have an API endpoint to mark all as read
+      // For now, we'll mark each unread notification as read
+      const unreadNotifications = notifications.filter(n => !n.isRead);
+      await Promise.all(unreadNotifications.map(n => markAsRead.mutateAsync(n.id)));
+      
+      toast({
+        description: "All notifications marked as read",
+      });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      toast({
+        title: "Error",
+        description: "Failed to mark notifications as read",
+        variant: "destructive",
+      });
+    }
   };
   
   const handleDeleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-    
+    // In a real implementation, this would call an API to delete the notification
+    // For now, we'll just show a toast
     toast({
       description: "Notification deleted",
     });
   };
   
   const handleClearAll = () => {
-    setNotifications([]);
-    
+    // In a real implementation, this would call an API to clear all notifications
+    // For now, we'll just show a toast
     toast({
       description: "All notifications cleared",
     });
   };
   
   // Format notification time to readable format
-  const formatTime = (date: Date) => {
+  const formatTime = (dateStr: string) => {
+    const date = new Date(dateStr);
     const now = new Date();
     const diffInHours = Math.abs(now.getTime() - date.getTime()) / 36e5;
     
@@ -157,14 +99,7 @@ export default function NotificationCenter() {
     return date.toLocaleDateString();
   };
   
-  // Reset unread count when closing the notification panel
-  useEffect(() => {
-    if (!isOpen) {
-      // In a real app, this would also update the server
-    }
-  }, [isOpen]);
-  
-  const getTypeIcon = (type: NotificationType) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
       case "update":
         return <div className="h-2 w-2 rounded-full bg-blue-600"></div>;
@@ -178,6 +113,11 @@ export default function NotificationCenter() {
         return <div className="h-2 w-2 rounded-full bg-gray-400"></div>;
     }
   };
+  
+  // Don't show the notification center if user is not logged in
+  if (!user) {
+    return null;
+  }
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -229,7 +169,11 @@ export default function NotificationCenter() {
           
           <TabsContent value="all" className="mt-0">
             <ScrollArea className="h-[70vh]">
-              {displayedNotifications.length > 0 ? (
+              {isLoading ? (
+                <div className="p-8 text-center">
+                  <p className="text-muted-foreground">Loading notifications...</p>
+                </div>
+              ) : displayedNotifications.length > 0 ? (
                 displayedNotifications.map((notification) => (
                   <div key={notification.id} className={`p-4 border-b ${!notification.isRead ? 'bg-muted/30' : ''}`}>
                     <div className="flex items-start gap-3">
@@ -240,18 +184,18 @@ export default function NotificationCenter() {
                             {notification.title}
                           </h4>
                           <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {formatTime(notification.timestamp)}
+                            {formatTime(notification.date)}
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {notification.description}
+                          {notification.content}
                         </p>
-                        {notification.link && (
+                        {notification.relatedId && notification.relatedType && (
                           <div className="pt-1">
                             <SheetClose asChild>
                               <Button variant="link" size="sm" className="h-auto p-0" asChild>
-                                <Link to={notification.link}>
-                                  {notification.actionText || "View Details"}
+                                <Link to={`/${notification.relatedType === 'startup' ? 'startups' : 'investments'}/${notification.relatedId}`}>
+                                  View Details
                                   <ChevronRight className="h-3 w-3 ml-1" />
                                 </Link>
                               </Button>
@@ -287,9 +231,7 @@ export default function NotificationCenter() {
                 ))
               ) : (
                 <div className="p-8 text-center">
-                  <p className="text-muted-foreground">
-                    {activeTab === "all" ? "No notifications yet" : "No unread notifications"}
-                  </p>
+                  <p className="text-muted-foreground">No notifications yet</p>
                 </div>
               )}
             </ScrollArea>
@@ -297,7 +239,11 @@ export default function NotificationCenter() {
           
           <TabsContent value="unread" className="mt-0">
             <ScrollArea className="h-[70vh]">
-              {displayedNotifications.length > 0 ? (
+              {isLoading ? (
+                <div className="p-8 text-center">
+                  <p className="text-muted-foreground">Loading notifications...</p>
+                </div>
+              ) : displayedNotifications.length > 0 ? (
                 displayedNotifications.map((notification) => (
                   <div key={notification.id} className="p-4 border-b bg-muted/30">
                     <div className="flex items-start gap-3">
@@ -308,18 +254,18 @@ export default function NotificationCenter() {
                             {notification.title}
                           </h4>
                           <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {formatTime(notification.timestamp)}
+                            {formatTime(notification.date)}
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {notification.description}
+                          {notification.content}
                         </p>
-                        {notification.link && (
+                        {notification.relatedId && notification.relatedType && (
                           <div className="pt-1">
                             <SheetClose asChild>
                               <Button variant="link" size="sm" className="h-auto p-0" asChild>
-                                <Link to={notification.link}>
-                                  {notification.actionText || "View Details"}
+                                <Link to={`/${notification.relatedType === 'startup' ? 'startups' : 'investments'}/${notification.relatedId}`}>
+                                  View Details
                                   <ChevronRight className="h-3 w-3 ml-1" />
                                 </Link>
                               </Button>
@@ -361,7 +307,7 @@ export default function NotificationCenter() {
         </Tabs>
         
         <SheetFooter className="px-4 py-3 border-t flex-row justify-between">
-          {displayedNotifications.length > 0 && (
+          {!isLoading && displayedNotifications.length > 0 && (
             <>
               {unreadCount > 0 && (
                 <Button variant="outline" size="sm" onClick={handleMarkAllAsRead}>

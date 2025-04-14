@@ -34,6 +34,7 @@ export interface Investment {
   amount: number;
   date: Date;
   equity: number;
+  status: 'pending' | 'completed' | 'failed'; // Added status property
 }
 
 export interface Post {
@@ -84,4 +85,17 @@ export interface SuccessStory {
   raisedAmount: number;
   investors: number;
   campaignLength: number;
+}
+
+// Add an interface for notifications to integrate with the backend
+export interface Notification {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  content: string;
+  date: string;
+  isRead: boolean;
+  relatedId?: string;
+  relatedType?: string;
 }

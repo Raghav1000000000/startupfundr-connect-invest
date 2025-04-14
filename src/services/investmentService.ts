@@ -18,7 +18,7 @@ const mockInvestments: Investment[] = [
     amount: 10000,
     equity: 0.5,
     status: "completed",
-    createdAt: new Date().toISOString()
+    date: new Date()
   },
   {
     id: "inv2",
@@ -27,7 +27,7 @@ const mockInvestments: Investment[] = [
     amount: 5000,
     equity: 0.25,
     status: "completed",
-    createdAt: new Date().toISOString()
+    date: new Date()
   }
 ];
 
