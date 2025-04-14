@@ -1,6 +1,7 @@
 
 import api from "./api";
 import { Startup } from "@/types";
+import { toast } from "@/components/ui/use-toast";
 
 // Fallback data for when API is not accessible (like in preview mode)
 const mockStartups: Startup[] = [
@@ -70,6 +71,11 @@ export const startupService = {
       console.error("Failed to fetch startups:", error);
       // Return mock data in case of failure
       console.log("Using fallback startup data");
+      toast({
+        title: "Connection Issue",
+        description: "Couldn't connect to the server. Showing sample data instead.",
+        variant: "destructive",
+      });
       return mockStartups;
     }
   },
@@ -82,6 +88,11 @@ export const startupService = {
       console.error("Failed to fetch featured startups:", error);
       // Return featured mock data in case of failure
       console.log("Using fallback featured startup data");
+      toast({
+        title: "Connection Issue",
+        description: "Couldn't load featured startups from the server.",
+        variant: "destructive",
+      });
       return mockStartups.filter(startup => startup.featured);
     }
   },
@@ -96,6 +107,11 @@ export const startupService = {
       const mockStartup = mockStartups.find(s => s.id === id);
       if (mockStartup) {
         console.log(`Using fallback data for startup ${id}`);
+        toast({
+          title: "Connection Issue",
+          description: "Showing cached startup data. Some features may be limited.",
+          variant: "destructive",
+        });
         return mockStartup;
       }
       throw error;
@@ -110,6 +126,11 @@ export const startupService = {
       console.error(`Failed to fetch startups in industry ${industry}:`, error);
       // Filter mock data by industry
       console.log(`Using fallback data for ${industry} industry`);
+      toast({
+        title: "Connection Issue",
+        description: `Showing sample data for ${industry} industry.`,
+        variant: "destructive",
+      });
       return mockStartups.filter(s => 
         s.industry.toLowerCase() === industry.toLowerCase()
       );
@@ -122,6 +143,11 @@ export const startupService = {
       return response.data;
     } catch (error) {
       console.error("Failed to create startup:", error);
+      toast({
+        title: "Startup Creation Failed",
+        description: "There was a problem creating your startup. Please try again.",
+        variant: "destructive",
+      });
       throw error;
     }
   },
@@ -132,6 +158,11 @@ export const startupService = {
       return response.data;
     } catch (error) {
       console.error(`Failed to update startup with ID ${id}:`, error);
+      toast({
+        title: "Update Failed",
+        description: "There was a problem updating the startup information.",
+        variant: "destructive",
+      });
       throw error;
     }
   },
@@ -141,6 +172,11 @@ export const startupService = {
       await api.delete(`/startups/${id}`);
     } catch (error) {
       console.error(`Failed to delete startup with ID ${id}:`, error);
+      toast({
+        title: "Deletion Failed",
+        description: "There was a problem deleting the startup.",
+        variant: "destructive",
+      });
       throw error;
     }
   }

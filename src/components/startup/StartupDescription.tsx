@@ -1,5 +1,6 @@
 
 import { Startup } from "@/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface StartupDescriptionProps {
   startup: Startup;
@@ -7,11 +8,21 @@ interface StartupDescriptionProps {
 
 export default function StartupDescription({ startup }: StartupDescriptionProps) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h2 className="text-xl font-bold mb-3">About {startup.name}</h2>
-      <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
-        {startup.description}
-      </p>
-    </div>
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-xl">About {startup.name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {startup.description ? (
+          <p className="text-muted-foreground whitespace-pre-line leading-relaxed">
+            {startup.description}
+          </p>
+        ) : (
+          <p className="text-muted-foreground italic">
+            No detailed description available for this startup.
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }
