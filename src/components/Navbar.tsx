@@ -42,14 +42,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-100 py-4 shadow-sm">
+    <nav className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 py-4 shadow-sm transition-colors duration-300">
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2" onClick={handleNavigation}>
           <div className="bg-fundr-600 text-white font-bold text-xl rounded w-10 h-10 flex items-center justify-center">
             SF
           </div>
-          <span className="font-bold text-xl hidden sm:block">StartupFundr</span>
+          <span className="font-bold text-xl hidden sm:block dark:text-white">StartupFundr</span>
         </Link>
 
         {/* Desktop Menu */}
@@ -62,17 +62,17 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>
               <Link to="/profile">
-                <Button variant="outline">My Profile</Button>
+                <Button variant="outline" className="dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800">My Profile</Button>
               </Link>
-              <Button onClick={handleLogout} variant="ghost">Logout</Button>
+              <Button onClick={handleLogout} variant="ghost" className="dark:text-gray-200 dark:hover:bg-gray-800">Logout</Button>
             </>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost">Sign In</Button>
+                <Button variant="ghost" className="dark:text-gray-200 dark:hover:bg-gray-800">Sign In</Button>
               </Link>
               <Link to="/signup">
-                <Button>Join Now</Button>
+                <Button className="dark:bg-fundr-600 dark:hover:bg-fundr-700">Join Now</Button>
               </Link>
             </>
           )}
@@ -80,7 +80,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <div className="lg:hidden">
-          <Button onClick={toggleMobileMenu} variant="ghost" size="icon">
+          <Button onClick={toggleMobileMenu} variant="ghost" size="icon" className="dark:text-gray-200">
             {mobileMenuOpen ? <X /> : <Menu />}
           </Button>
         </div>
@@ -88,26 +88,26 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 py-4">
+        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 py-4 transition-colors duration-300">
           <div className="container mx-auto px-4 space-y-4">
             <div className="space-y-3">
               <NavLinks isMobile={true} />
             </div>
-            <div className="flex flex-col space-y-2 pt-4 border-t border-gray-100">
+            <div className="flex flex-col space-y-2 pt-4 border-t border-gray-100 dark:border-gray-800">
               {isAuthenticated ? (
                 <>
                   <Link to="/profile" onClick={handleNavigation}>
-                    <Button variant="outline" className="w-full">My Profile</Button>
+                    <Button variant="outline" className="w-full dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800">My Profile</Button>
                   </Link>
-                  <Button onClick={handleLogout} variant="ghost" className="w-full">Logout</Button>
+                  <Button onClick={handleLogout} variant="ghost" className="w-full dark:text-gray-200 dark:hover:bg-gray-800">Logout</Button>
                 </>
               ) : (
                 <>
                   <Link to="/login" onClick={handleNavigation}>
-                    <Button variant="ghost" className="w-full">Sign In</Button>
+                    <Button variant="ghost" className="w-full dark:text-gray-200 dark:hover:bg-gray-800">Sign In</Button>
                   </Link>
                   <Link to="/signup" onClick={handleNavigation}>
-                    <Button className="w-full">Join Now</Button>
+                    <Button className="w-full dark:bg-fundr-600 dark:hover:bg-fundr-700">Join Now</Button>
                   </Link>
                 </>
               )}
