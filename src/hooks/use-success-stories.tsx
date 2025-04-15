@@ -45,6 +45,8 @@ export function useSuccessStories() {
   return useQuery({
     queryKey: ["successStories"],
     queryFn: fetchSuccessStories,
+    // Ensure we always return an array
+    select: (data) => Array.isArray(data) ? data : [],
   });
 }
 
@@ -76,5 +78,7 @@ export function useFeaturedSuccessStories() {
         return []; // Return empty array to prevent UI breaking
       }
     },
+    // Ensure we always return an array
+    select: (data) => Array.isArray(data) ? data : [],
   });
 }

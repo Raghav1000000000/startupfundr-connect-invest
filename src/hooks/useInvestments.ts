@@ -15,6 +15,8 @@ export function useInvestments() {
   const getUserInvestments = useQuery({
     queryKey: ["investments", "user"],
     queryFn: investmentService.getUserInvestments,
+    // Ensure we always return an array
+    select: (data) => Array.isArray(data) ? data : [],
   });
   
   const getStartupInvestments = (startupId: string) => {
@@ -22,6 +24,8 @@ export function useInvestments() {
       queryKey: ["investments", "startup", startupId],
       queryFn: () => investmentService.getStartupInvestments(startupId),
       enabled: !!startupId,
+      // Ensure we always return an array
+      select: (data) => Array.isArray(data) ? data : [],
     });
   };
   

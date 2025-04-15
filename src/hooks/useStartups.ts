@@ -15,6 +15,8 @@ export function useStartups() {
   const getFeaturedStartups = useQuery({
     queryKey: ["startups", "featured"],
     queryFn: startupService.getFeatured,
+    // Ensure we always return an array even if the API fails
+    select: (data) => Array.isArray(data) ? data : [],
   });
   
   const getStartupById = (id: string) => {
@@ -30,6 +32,8 @@ export function useStartups() {
       queryKey: ["startups", "industry", industry],
       queryFn: () => startupService.getByIndustry(industry),
       enabled: !!industry,
+      // Ensure we always return an array even if the API fails
+      select: (data) => Array.isArray(data) ? data : [],
     });
   };
   

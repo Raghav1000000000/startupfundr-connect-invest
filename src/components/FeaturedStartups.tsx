@@ -9,6 +9,9 @@ export default function FeaturedStartups() {
   const { getFeaturedStartups } = useStartups();
   const { data: startups, isLoading, error } = getFeaturedStartups;
 
+  // Ensure startups is always an array before mapping over it
+  const safeStartups = Array.isArray(startups) ? startups : [];
+
   if (error) {
     return (
       <div className="py-12 text-center">
@@ -19,7 +22,7 @@ export default function FeaturedStartups() {
   }
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-12 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Featured Startups</h2>
         
@@ -49,7 +52,7 @@ export default function FeaturedStartups() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {startups?.slice(0, 6).map((startup) => (
+            {safeStartups.slice(0, 6).map((startup) => (
               <Card key={startup.id} className="h-full flex flex-col">
                 <CardHeader className="pb-4">
                   <div className="flex items-center mb-2">
@@ -67,13 +70,13 @@ export default function FeaturedStartups() {
                   <CardDescription>{startup.tagline}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-sm text-gray-500 mb-4 line-clamp-3">{startup.description}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 mb-4 line-clamp-3">{startup.description}</p>
                   
-                  <div className="flex justify-between text-xs text-gray-500 mb-2">
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-300 mb-2">
                     <span>Asking: ${startup.askAmount?.toLocaleString()}</span>
                     <span>Equity: {startup.equity}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 mb-4">
                     <div 
                       className="bg-green-600 h-2.5 rounded-full" 
                       style={{ width: `${Math.min((startup.raisedAmount || 0) / (startup.askAmount || 1) * 100, 100)}%` }}
