@@ -1,5 +1,5 @@
 
-import { api } from "./api";
+import api from "./api";
 import { Startup } from "@/types";
 import { startups } from "@/data/startups";
 
@@ -7,6 +7,10 @@ export const startupService = {
   getAll: async (): Promise<Startup[]> => {
     try {
       const response = await api.get<Startup[]>("/startups");
+      if (!Array.isArray(response.data)) {
+        console.warn("API response for getAll startups is not an array:", response.data);
+        return startups; // Fallback to local data
+      }
       return response.data;
     } catch (error) {
       console.error("Error fetching all startups:", error);
